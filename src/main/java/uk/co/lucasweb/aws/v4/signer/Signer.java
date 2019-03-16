@@ -14,7 +14,6 @@ package uk.co.lucasweb.aws.v4.signer;
 
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
-import uk.co.lucasweb.aws.v4.signer.functional.Throwables;
 import uk.co.lucasweb.aws.v4.signer.hash.Base16;
 import uk.co.lucasweb.aws.v4.signer.hash.Sha256;
 
@@ -22,9 +21,8 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Richard Lucas
@@ -33,7 +31,7 @@ public class Signer {
 
     private static final String AUTH_TAG = "AWS4";
     private static final String ALGORITHM = AUTH_TAG + "-HMAC-SHA256";
-    private static final Charset UTF_8 = Throwables.returnableInstance(() -> Charset.forName("UTF-8"), SigningException::new);
+    private static final Charset UTF_8 = getUtf8();
     private static final String X_AMZ_DATE = "X-Amz-Date";
     private static final String HMAC_SHA256 = "HmacSHA256";
 
@@ -100,6 +98,14 @@ public class Signer {
         return Base16.encode(hmacSha256(kSigning, stringToSign)).toLowerCase();
     }
 
+    private static Charset getUtf8() {
+        try {
+            return Charset.forName("UTF-8");
+        } catch (Exception e) {
+            throw new SigningException(e);
+        }
+    }
+
     public static class Builder {
 
         private static final String DEFAULT_REGION = "us-east-1";
@@ -131,20 +137,26 @@ public class Signer {
         }
 
         public Builder headers(Header... headers) {
-            Arrays.stream(headers)
-                    .forEach(headersList::add);
+            Collections.addAll(headersList, headers);
             return this;
         }
 
         public Signer build(HttpRequest request, String service, String contentSha256) {
             CanonicalHeaders canonicalHeaders = getCanonicalHeaders();
-            String date = canonicalHeaders.getFirstValue(X_AMZ_DATE)
-                    .orElseThrow(() -> new SigningException("headers missing '" + X_AMZ_DATE + "' header"));
+            String date = getDate(canonicalHeaders);
             String dateWithoutTimestamp = formatDateWithoutTimestamp(date);
             AwsCredentials awsCredentials = getAwsCredentials();
             CanonicalRequest canonicalRequest = new CanonicalRequest(service, request, canonicalHeaders, contentSha256);
             CredentialScope scope = new CredentialScope(dateWithoutTimestamp, service, region);
             return new Signer(canonicalRequest, awsCredentials, date, scope);
+        }
+
+        private String getDate(CanonicalHeaders canonicalHeaders) {
+            String value = canonicalHeaders.getFirstValue(X_AMZ_DATE);
+            if (value == null) {
+                throw new SigningException("headers missing '" + X_AMZ_DATE + "' header");
+            }
+            return value;
         }
 
         public Signer buildS3(HttpRequest request, String contentSha256) {
@@ -156,13 +168,14 @@ public class Signer {
         }
 
         private AwsCredentials getAwsCredentials() {
-            return Optional.ofNullable(awsCredentials)
-                    .orElseGet(() -> new AwsCredentialsProviderChain().getCredentials());
+            return awsCredentials == null ? new AwsCredentialsProviderChain().getCredentials() : awsCredentials;
         }
 
         private CanonicalHeaders getCanonicalHeaders() {
             CanonicalHeaders.Builder builder = CanonicalHeaders.builder();
-            headersList.forEach(h -> builder.add(h.getName(), h.getValue()));
+            for (Header header : headersList) {
+                builder.add(header.getName(), header.getValue());
+            }
             return builder.build();
         }
 
