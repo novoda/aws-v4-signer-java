@@ -1,4 +1,4 @@
-#aws-v4-signer-java
+# aws-v4-signer-java
 
 aws-v4-signer-java is a lightweight implementation of the AWS V4 signing algorithm required by many of the AWS services. 
 
