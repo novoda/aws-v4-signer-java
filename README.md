@@ -1,19 +1,25 @@
 #aws-v4-signer-java
 
-aws-v4-signer-java is a lightweight, zero-dependency implementation of the AWS V4 signing algorithm required by many of the AWS services. 
+aws-v4-signer-java is a lightweight implementation of the AWS V4 signing algorithm required by many of the AWS services. 
 
-Requires Java 8+.
+Compatible with Java 7+.
 
 ## Setup
 
-Add the latest aws-v4-signer-java Maven dependency to your project
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=aws-v4-signer-java)](https://ci.novoda.com/job/aws-v4-signer-java/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/snapshots/aws-v4-signer-java/images/download.svg)](https://bintray.com/novoda/snapshots/aws-v4-signer-java/_latestVersion)
 
-```xml
-<dependency>
-  <groupId>uk.co.lucasweb</groupId>
-  <artifactId>aws-v4-signer-java</artifactId>
-  <version>1.3</version>
-</dependency>
+Add the latest aws-v4-signer-java Gradle dependency to your project
+
+```gradle
+repository {
+    maven {
+        url 'https://novoda.bintray.com/snapshots'
+    }
+} 
+
+dependencies {
+    implementation 'com.novoda:aws-v4-signer-java:1.3-java7'
+}
 ```
 
 ## Usage
