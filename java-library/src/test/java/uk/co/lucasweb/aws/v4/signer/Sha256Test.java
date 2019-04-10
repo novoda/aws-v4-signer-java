@@ -14,7 +14,7 @@ package uk.co.lucasweb.aws.v4.signer;
 
 import org.junit.Test;
 
-import uk.co.lucasweb.aws.v4.signer.hash.Sha256ToHexString;
+import uk.co.lucasweb.aws.v4.signer.hash.Sha256;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,7 @@ public class Sha256Test {
 
     @Test
     public void shouldGetSha256() {
-        String contentHash = Sha256ToHexString.INSTANCE.digest(TEST);
+        String contentHash = Sha256.INSTANCE.digestAsHexString(TEST);
 
         assertThat(contentHash)
                 .isEqualTo("5f1da1a2d0feb614dd03d71e87928b8e449ac87614479332aced3a701f916743");

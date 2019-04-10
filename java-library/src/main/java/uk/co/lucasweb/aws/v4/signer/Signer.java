@@ -22,7 +22,7 @@ import java.util.List;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
 import uk.co.lucasweb.aws.v4.signer.hash.Base16;
-import uk.co.lucasweb.aws.v4.signer.hash.Sha256ToHexString;
+import uk.co.lucasweb.aws.v4.signer.hash.Sha256;
 
 /**
  * @author Richard Lucas
@@ -52,7 +52,7 @@ public class Signer {
     }
 
     String getStringToSign() {
-        String hashedCanonicalRequest = Sha256ToHexString.INSTANCE.digest(getCanonicalRequest());
+        String hashedCanonicalRequest = Sha256.INSTANCE.digestAsHexString(getCanonicalRequest());
         return buildStringToSign(date, scope.get(), hashedCanonicalRequest);
     }
 
