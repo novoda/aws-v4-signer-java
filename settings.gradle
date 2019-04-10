@@ -1,1 +1,3 @@
 rootProject.name = 'aws-v4-signer-java'
+
+include ':java-library'
