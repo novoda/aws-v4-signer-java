@@ -1,6 +1,6 @@
 package uk.co.lucasweb.aws.v4.signer
 
-internal data class CanonicalHeaders constructor(
+data class CanonicalHeaders constructor(
     val names: String,
     val canonicalizedHeaders: String,
     private val internalMap: Map<String, List<String>>
@@ -8,7 +8,7 @@ internal data class CanonicalHeaders constructor(
 
     fun getFirstValue(headerName: String): String? = internalMap[headerName.toLowerCase()]?.get(0)
 
-    internal class Builder {
+    class Builder {
 
         private val internalMap = mutableMapOf<String, MutableList<String>>()
 

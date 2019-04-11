@@ -173,7 +173,7 @@ public class Signer {
         }
 
         private CanonicalHeaders getCanonicalHeaders() {
-            CanonicalHeaders.Builder builder = CanonicalHeaders.builder();
+            CanonicalHeaders.Builder builder = new CanonicalHeaders.Builder();
             for (Header header : headersList) {
                 builder.add(header.getName(), header.getValue());
             }

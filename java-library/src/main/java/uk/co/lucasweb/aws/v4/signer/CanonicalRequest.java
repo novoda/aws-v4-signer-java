@@ -46,7 +46,7 @@ class CanonicalRequest {
         return httpRequest.getMethod() +
                 "\n" + normalizePath(httpRequest.getPath()) +
                 "\n" + normalizeQuery(httpRequest.getQuery()) +
-                "\n" + headers.get() +
+                "\n" + headers.getCanonicalizedHeaders() +
                 "\n" + headers.getNames() +
                 "\n" + contentSha256;
     }
