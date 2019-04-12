@@ -1,6 +1,5 @@
 package com.novoda.aws.v4.signer.encoding
 
-import io.ktor.http.URLBuilder
-import io.ktor.http.fullPath
+import io.ktor.http.encodeURLPath
 
-fun encodePath(path: String): String = URLBuilder(path).build().fullPath
+fun encodePath(path: String): String = path.encodeURLPath()
