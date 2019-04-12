@@ -1,5 +1,7 @@
 package com.novoda.aws.v4.signer.hash
 
+import kotlinx.serialization.toUtf8Bytes
+
 /**
  * Digest Class for SHA-256.
  * Original Java version at https://github.com/meyfa/java-sha256/blob/master/src/main/java/net/meyfa/sha256/Sha256.java
@@ -91,7 +93,7 @@ object Sha256 {
     }
 
     fun digest(message: String): ByteArray {
-        return digest(message.toUtf8ByteArray())
+        return digest(message.toUtf8Bytes())
     }
 
     /**
