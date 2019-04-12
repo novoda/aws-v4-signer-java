@@ -1,12 +1,13 @@
-package uk.co.lucasweb.aws.v4.signer
+package com.novoda.aws.v4.signer.hash
 
+import com.novoda.aws.v4.signer.CanonicalHeaders
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CanonicalHeadersTest {
 
     @Test
-    fun `build canonicalized headers`() {
+    fun `builds canonicalized headers`() {
         val headers = CanonicalHeaders.Builder()
             .add("test", "one")
             .add("test", "two")
@@ -17,7 +18,7 @@ class CanonicalHeadersTest {
         assertEquals("hello:world\ntest:one,two\n", headers.canonicalizedHeaders)
     }
 
-    @Test
+   @Test
     fun `given header has value then return get first value`() {
         val headers = CanonicalHeaders.Builder()
             .add("test", "one")

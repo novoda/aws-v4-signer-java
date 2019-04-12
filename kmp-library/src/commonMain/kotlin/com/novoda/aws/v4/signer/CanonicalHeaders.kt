@@ -1,4 +1,4 @@
-package uk.co.lucasweb.aws.v4.signer
+package com.novoda.aws.v4.signer
 
 data class CanonicalHeaders constructor(
     val names: String,

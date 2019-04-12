@@ -12,6 +12,7 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.CanonicalHeaders;
 import com.novoda.aws.v4.signer.hash.Sha256;
 
 import javax.crypto.Mac;

@@ -12,6 +12,8 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.CanonicalHeaders;
+
 import java.net.URI;
 
 import org.junit.Test;
