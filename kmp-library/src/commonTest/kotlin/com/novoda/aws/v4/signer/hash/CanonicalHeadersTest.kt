@@ -18,7 +18,16 @@ class CanonicalHeadersTest {
         assertEquals("hello:world\ntest:one,two\n", headers.canonicalizedHeaders)
     }
 
-   @Test
+    @Test
+    fun `trims values when building canonicalized headers `() {
+        val headers = CanonicalHeaders.Builder()
+                .add("my-header2", "a   b   c")
+                .build()
+
+        assertEquals("my-header2:a b c\n", headers.canonicalizedHeaders)
+    }
+
+    @Test
     fun `given header has value then return get first value`() {
         val headers = CanonicalHeaders.Builder()
             .add("test", "one")

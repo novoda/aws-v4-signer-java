@@ -53,7 +53,7 @@ data class CanonicalHeaders constructor(
             return value
                 .split("\n")
                 .map { it.trim() }
-                .map { it.replace(" +", " ") }
+                .map { it.replace(Regex(" +"), " ") }
                 .joinToString(separator = ",")
         }
     }
