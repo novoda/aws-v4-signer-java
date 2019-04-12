@@ -13,6 +13,7 @@
 package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
+import com.novoda.aws.v4.signer.encoding.URLEncodingKt;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -66,7 +67,7 @@ class CanonicalRequest {
             return "/";
         }
         // Encode characters as mandated by AWS
-        String encoded = URLEncoding.encodePath(path);
+        String encoded = URLEncodingKt.encodePath(path);
         if (S3_SERVICE.equals(service)) {
             /*
              * S3 requests should not be normalized.
