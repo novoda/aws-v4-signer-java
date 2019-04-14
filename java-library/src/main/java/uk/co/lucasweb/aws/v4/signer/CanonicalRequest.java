@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import uk.co.lucasweb.aws.v4.signer.encoding.URLEncoding;
-
 /**
  * @author Richard Lucas
  */
@@ -120,9 +118,9 @@ class CanonicalRequest {
                 // No value => use an empty string as per the spec
                 value = "";
             }
-            builder.append(URLEncoding.encodeQueryComponent(name))
+            builder.append(URLEncodingKt.encodeQueryComponent(name))
                     .append(QUERY_PARAMETER_VALUE_SEPARATOR)
-                    .append(URLEncoding.encodeQueryComponent(value));
+                    .append(URLEncodingKt.encodeQueryComponent(value));
         }
 
         return builder.toString();
