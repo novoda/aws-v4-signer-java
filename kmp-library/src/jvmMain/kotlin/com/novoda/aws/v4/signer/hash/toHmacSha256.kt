@@ -1,6 +1,5 @@
 package com.novoda.aws.v4.signer.hash
 
-import java.nio.charset.StandardCharsets.UTF_8
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -11,5 +10,5 @@ actual fun String.toHmacSha256(key: ByteArray): ByteArray {
     val mac = Mac.getInstance(algorithm)
     val signingKey = SecretKeySpec(key, algorithm)
     mac.init(signingKey)
-    return mac.doFinal(toByteArray(UTF_8))
+    return mac.doFinal(toByteArray())
 }
