@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-import uk.co.lucasweb.aws.v4.signer.hash.Sha256;
+import com.novoda.aws.v4.signer.hash.Sha256;
 
 /**
  * @author Yoann Rodiere
@@ -130,7 +130,7 @@ public class AWSTestSuite {
 
         List<Header> headers = parseHeaders(it);
 
-        String contentHash = Sha256.get(parseContent(it), StandardCharsets.UTF_8);
+        String contentHash = Sha256.INSTANCE.digestAsHexString(parseContent(it));
 
         return new TestAWSRequestToSign(method, pathAndQuery, headers, contentHash);
     }

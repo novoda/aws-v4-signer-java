@@ -12,10 +12,7 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
-import uk.co.lucasweb.aws.v4.signer.hash.Base16;
-import uk.co.lucasweb.aws.v4.signer.hash.Sha256;
+import com.novoda.aws.v4.signer.hash.Sha256;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,6 +20,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
+import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
+import uk.co.lucasweb.aws.v4.signer.hash.Base16;
 
 /**
  * @author Richard Lucas
@@ -52,7 +53,7 @@ public class Signer {
     }
 
     String getStringToSign() {
-        String hashedCanonicalRequest = Sha256.get(getCanonicalRequest(), UTF_8);
+        String hashedCanonicalRequest = Sha256.INSTANCE.digestAsHexString(getCanonicalRequest());
         return buildStringToSign(date, scope.get(), hashedCanonicalRequest);
     }
 
