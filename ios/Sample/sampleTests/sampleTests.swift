@@ -8,6 +8,8 @@
 
 import XCTest
 @testable import sample
+import main
+
 
 class sampleTests: XCTestCase {
     
@@ -21,16 +23,20 @@ class sampleTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testSha256Request() {
+        let request = "PUT\n" +
+            "/-/vaults/examplevault\n" +
+            "\n" +
+            "host:glacier.us-east-1.amazonaws.com\n" +
+            "x-amz-date:20120525T002453Z\n" +
+            "x-amz-glacier-version:2012-06-01\n" +
+            "\n" +
+            "host;x-amz-date;x-amz-glacier-version\n" +
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        
+        let contentHash = Sha256Encoder().encode(value: request)
+        
+        assert(contentHash == "5f1da1a2d0feb614dd03d71e87928b8e449ac87614479332aced3a701f916743")
     }
     
 }
