@@ -1,11 +1,3 @@
-//
-//  sampleTests.swift
-//  sampleTests
-//
-//  Created by Tobias Heine on 16.04.19.
-//  Copyright © 2019 Novoda. All rights reserved.
-//
-
 import XCTest
 @testable import sample
 import main
