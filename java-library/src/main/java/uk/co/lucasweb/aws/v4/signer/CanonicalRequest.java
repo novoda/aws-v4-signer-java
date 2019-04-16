@@ -12,9 +12,10 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.CanonicalHeaders;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +47,7 @@ class CanonicalRequest {
         return httpRequest.getMethod() +
                 "\n" + normalizePath(httpRequest.getPath()) +
                 "\n" + normalizeQuery(httpRequest.getQuery()) +
-                "\n" + headers.get() +
+                "\n" + headers.getCanonicalizedHeaders() +
                 "\n" + headers.getNames() +
                 "\n" + contentSha256;
     }
