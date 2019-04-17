@@ -31,4 +31,11 @@ class sampleTests: XCTestCase {
         assert(contentHash == "5f1da1a2d0feb614dd03d71e87928b8e449ac87614479332aced3a701f916743")
     }
     
+    func testHmac256Signature() {
+        
+        let signature = HmacTester().signature()
+        
+        assert(signature == "5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7")
+    }
+    
 }
