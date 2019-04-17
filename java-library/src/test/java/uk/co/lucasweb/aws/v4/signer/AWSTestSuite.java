@@ -12,6 +12,8 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.hash.Sha256Encoder;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,7 +35,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-import com.novoda.aws.v4.signer.hash.Sha256;
 
 /**
  * @author Yoann Rodiere
@@ -130,7 +131,7 @@ public class AWSTestSuite {
 
         List<Header> headers = parseHeaders(it);
 
-        String contentHash = Sha256.INSTANCE.digestAsHexString(parseContent(it));
+        String contentHash = Sha256Encoder.INSTANCE.encode(parseContent(it));
 
         return new TestAWSRequestToSign(method, pathAndQuery, headers, contentHash);
     }

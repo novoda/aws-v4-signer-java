@@ -13,7 +13,7 @@
 package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
-import com.novoda.aws.v4.signer.hash.Sha256;
+import com.novoda.aws.v4.signer.hash.Sha256Encoder;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -54,7 +54,7 @@ public class Signer {
     }
 
     String getStringToSign() {
-        String hashedCanonicalRequest = Sha256.INSTANCE.digestAsHexString(getCanonicalRequest());
+        String hashedCanonicalRequest = Sha256Encoder.INSTANCE.encode(getCanonicalRequest());
         return buildStringToSign(date, scope.get(), hashedCanonicalRequest);
     }
 
