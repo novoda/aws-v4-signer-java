@@ -13,8 +13,8 @@
 package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
+import com.novoda.aws.v4.signer.hash.Hmac256Encoder;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
-import com.novoda.aws.v4.signer.hash.ToHmacSha256Kt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class Signer {
     }
 
     private static byte[] hmacSha256(byte[] key, String value) {
-        return ToHmacSha256Kt.toHmacSha256(value, key);
+        return Hmac256Encoder.INSTANCE.encode(key, value);
     }
 
     private static String buildSignature(String secretKey, CredentialScope scope, String stringToSign) {
