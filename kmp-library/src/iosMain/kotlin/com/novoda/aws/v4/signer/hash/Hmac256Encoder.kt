@@ -1,26 +1,24 @@
 package com.novoda.aws.v4.signer.hash
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.usePinned
 import platform.CoreCrypto.CCHmac
 import platform.CoreCrypto.CC_SHA256_DIGEST_LENGTH
 import platform.CoreCrypto.kCCHmacAlgSHA256
-import platform.Foundation.*
 
 actual object Hmac256Encoder {
     @ExperimentalUnsignedTypes
     actual fun encode(key: ByteArray, value: String): ByteArray {
-        memScoped {
-            val dataIn = (value as NSString).dataUsingEncoding(NSUTF8StringEncoding.toULong())!!
-            val macOut = NSMutableData.dataWithLength(CC_SHA256_DIGEST_LENGTH.convert())!!
-            val keyRef = key as CValuesRef<ByteVar>
-            val keyLength = key.size.toULong()
-
-            CCHmac(kCCHmacAlgSHA256, keyRef, keyLength, (dataIn.bytes as CValuesRef<ByteVar>), dataIn.length, macOut.mutableBytes as CValuesRef<UByteVar>)
-
-            val ba = macOut.bytes!!
-            val len = macOut.length.toInt()
-
-            return ba.readBytes(len)
+        val input = value.toUtf8()
+        val digest = UByteArray(CC_SHA256_DIGEST_LENGTH)
+        key.usePinned { keyPinned ->
+            input.usePinned { inputPinned ->
+                digest.usePinned { digestPinned ->
+                    CCHmac(kCCHmacAlgSHA256, keyPinned.addressOf(0), key.size.convert(), inputPinned.addressOf(0), input.size.convert(), digestPinned.addressOf(0))
+                }
+            }
         }
+        return digest.toByteArray()
     }
 }
