@@ -1,28 +1,25 @@
 package com.novoda.aws.v4.signer.hash
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.usePinned
 import platform.CoreCrypto.CC_SHA256
 import platform.CoreCrypto.CC_SHA256_DIGEST_LENGTH
-import platform.Foundation.*
 
 actual object Sha256Encoder {
 
     @ExperimentalUnsignedTypes
     actual fun encode(value: String): String {
-        memScoped {
-            val dataIn = (value as NSString).dataUsingEncoding(NSUTF8StringEncoding.toULong())!!
-            val macOut = NSMutableData.dataWithLength(CC_SHA256_DIGEST_LENGTH.convert())!!
-
-            CC_SHA256(dataIn.bytes as CValuesRef<ByteVar>, dataIn.length.toUInt(), macOut.mutableBytes as CValuesRef<UByteVar>)
-
-            val ba = macOut.bytes!!
-            val len = macOut.length.toInt()
-
-            val bytes = ba.readBytes(len)
-            return bytes.toHexString()
+        val input = value.toUtf8()
+        val digest = UByteArray(CC_SHA256_DIGEST_LENGTH)
+        input.usePinned { inputPinned ->
+            digest.usePinned { digestPinned ->
+                CC_SHA256(inputPinned.addressOf(0), input.size.convert(), digestPinned.addressOf(0))
+            }
         }
+        return digest.toHexString()
     }
 }
 
 @ExperimentalUnsignedTypes
-private fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }
+private fun UByteArray.toHexString() = joinToString("") { it.toString(16).padStart(2, '0') }
