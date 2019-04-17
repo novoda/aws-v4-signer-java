@@ -3,7 +3,7 @@ package com.novoda.aws.v4.signer.hash
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class Sha256Test {
+class Sha256EncoderTest {
 
     private val request = "PUT\n" +
             "/-/vaults/examplevault\n" +
