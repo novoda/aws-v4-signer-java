@@ -35,7 +35,7 @@ class sampleTests: XCTestCase {
         
         let signature = HmacTester().signature()
         
-        assert(signature == "5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7")
+        assert(signature == "fe52b221b5173b501c9863cec59554224072ca34c1c827ec5fb8a257f97637b1")
     }
     
 }
