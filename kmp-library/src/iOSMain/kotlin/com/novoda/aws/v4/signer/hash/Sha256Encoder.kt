@@ -20,6 +20,3 @@ actual object Sha256Encoder {
         return digest.toHexString()
     }
 }
-
-@ExperimentalUnsignedTypes
-private fun UByteArray.toHexString() = joinToString("") { it.toString(16).padStart(2, '0') }

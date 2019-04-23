@@ -13,18 +13,18 @@
 package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
+import com.novoda.aws.v4.signer.hash.ByteArrayExtensionsKt;
+import com.novoda.aws.v4.signer.hash.Hmac256Encoder;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
-import uk.co.lucasweb.aws.v4.signer.hash.Base16;
+
+import static com.novoda.aws.v4.signer.hash.StringExtensionsKt.toUtf8ByteArray;
 
 /**
  * @author Richard Lucas
@@ -33,9 +33,7 @@ public class Signer {
 
     private static final String AUTH_TAG = "AWS4";
     private static final String ALGORITHM = AUTH_TAG + "-HMAC-SHA256";
-    private static final Charset UTF_8 = getUtf8();
     private static final String X_AMZ_DATE = "X-Amz-Date";
-    private static final String HMAC_SHA256 = "HmacSHA256";
 
     private final CanonicalRequest request;
     private final AwsCredentials awsCredentials;
@@ -80,32 +78,16 @@ public class Signer {
     }
 
     private static byte[] hmacSha256(byte[] key, String value) {
-        try {
-            String algorithm = HMAC_SHA256;
-            Mac mac = Mac.getInstance(algorithm);
-            SecretKeySpec signingKey = new SecretKeySpec(key, algorithm);
-            mac.init(signingKey);
-            return mac.doFinal(value.getBytes(UTF_8));
-        } catch (Exception e) {
-            throw new SigningException("Error signing request", e);
-        }
+        return Hmac256Encoder.INSTANCE.encode(key, value);
     }
 
     private static String buildSignature(String secretKey, CredentialScope scope, String stringToSign) {
-        byte[] kSecret = (AUTH_TAG + secretKey).getBytes(UTF_8);
+        byte[] kSecret = toUtf8ByteArray((AUTH_TAG + secretKey));
         byte[] kDate = hmacSha256(kSecret, scope.getDateWithoutTimestamp());
         byte[] kRegion = hmacSha256(kDate, scope.getRegion());
         byte[] kService = hmacSha256(kRegion, scope.getService());
         byte[] kSigning = hmacSha256(kService, CredentialScope.TERMINATION_STRING);
-        return Base16.encode(hmacSha256(kSigning, stringToSign)).toLowerCase();
-    }
-
-    private static Charset getUtf8() {
-        try {
-            return Charset.forName("UTF-8");
-        } catch (Exception e) {
-            throw new SigningException(e);
-        }
+        return ByteArrayExtensionsKt.toHexString(hmacSha256(kSigning, stringToSign));
     }
 
     public static class Builder {
