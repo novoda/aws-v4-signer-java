@@ -12,10 +12,9 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.HttpRequest;
 import org.junit.Test;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-
-import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
