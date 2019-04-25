@@ -30,6 +30,7 @@ targetCompatibility = 1.7
 dependencies {
     compile project(':kmp-library')
     implementation 'com.squareup.okio:okio:2.2.2'
+    implementation "io.ktor:ktor-client-okhttp:$ktor_version"
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.2.0'

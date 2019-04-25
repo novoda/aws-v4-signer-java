@@ -12,10 +12,13 @@
  */
 package com.novoda.aws.v4.signer
 
-data class HttpRequest(val method: String, val path: String, val query:String?) {
+import io.ktor.http.Url
+import io.ktor.http.formUrlEncode
+
+data class HttpRequest(val method: String, val path: String, val query: String?) {
 
     companion object {
-        fun create(method: String, pathAndQuery:String): HttpRequest {
+        fun create(method: String, pathAndQuery: String): HttpRequest {
             val queryStart = pathAndQuery.indexOf('?')
             val path: String
             val query: String?
@@ -28,7 +31,10 @@ data class HttpRequest(val method: String, val path: String, val query:String?) 
             }
             return HttpRequest(method, path, query)
         }
-    }
 
+        fun create(method: String, url: Url):HttpRequest {
+            return HttpRequest(method, url.encodedPath, url.parameters.formUrlEncode())
+        }
+    }
 
 }

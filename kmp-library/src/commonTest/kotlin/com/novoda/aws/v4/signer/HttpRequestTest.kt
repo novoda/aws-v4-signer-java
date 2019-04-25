@@ -12,6 +12,7 @@
  */
 package com.novoda.aws.v4.signer
 
+import io.ktor.http.URLBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,11 +20,16 @@ class HttpRequestTest {
 
     @Test
     fun shouldGetHttpMethod() {
-        assertEquals(HttpRequest("GET", "/test").method, "GET")
+        assertEquals(HttpRequest.create("GET", "/test").method, "GET")
     }
 
     @Test
-    fun shouldGetQuery() {
-        assertEquals(HttpRequest("GET", "/test?test=one&hello=world").query, "test=one&hello=world")
+    fun shouldGetQueryFromUrl() {
+        assertEquals(HttpRequest.create("GET", URLBuilder("http://localhost/test?test=one&hello=world").build()).query, "test=one&hello=world")
+    }
+
+    @Test
+    fun shouldGetQueryFromPathAndQuery() {
+        assertEquals(HttpRequest.create("GET", "/test?test=one&hello=world").query, "test=one&hello=world")
     }
 }
