@@ -10,27 +10,20 @@
 
   Copyright 2016 the original author or authors.
  */
-package uk.co.lucasweb.aws.v4.signer;
+package com.novoda.aws.v4.signer
 
-import com.novoda.aws.v4.signer.HttpRequest;
-import org.junit.Test;
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * @author Richard Lucas
- */
-public class HttpRequestTest {
+class HttpRequestTest {
 
     @Test
-    public void shouldGetHttpMethod() throws Exception {
-        assertThat(new HttpRequest("GET", "/test").getMethod())
-                .isEqualTo("GET");
+    fun shouldGetHttpMethod() {
+        assertEquals(HttpRequest("GET", "/test").method, "GET")
     }
 
     @Test
-    public void shouldGetQuery() throws Exception {
-        assertThat(new HttpRequest("GET", "/test?test=one&hello=world").getQuery())
-                .isEqualTo("test=one&hello=world");
+    fun shouldGetQuery() {
+        assertEquals(HttpRequest("GET", "/test?test=one&hello=world").query, "test=one&hello=world")
     }
 }
