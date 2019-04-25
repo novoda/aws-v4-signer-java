@@ -12,8 +12,6 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
-import java.net.URI;
-
 /**
  * @author Richard Lucas
  */
@@ -22,12 +20,6 @@ public class HttpRequest {
     private final String method;
     private final String path;
     private final String query;
-
-    public HttpRequest(String method, URI uri) {
-        this.method = method;
-        this.path = uri.getRawPath();
-        this.query = uri.getRawQuery();
-    }
 
     public HttpRequest(String method, String pathAndQuery) {
         this.method = method;

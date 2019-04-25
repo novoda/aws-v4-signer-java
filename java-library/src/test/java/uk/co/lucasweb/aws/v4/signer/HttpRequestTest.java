@@ -25,13 +25,13 @@ public class HttpRequestTest {
 
     @Test
     public void shouldGetHttpMethod() throws Exception {
-        assertThat(new HttpRequest("GET", new URI("http://localhost/test")).getMethod())
+        assertThat(new HttpRequest("GET", "/test").getMethod())
                 .isEqualTo("GET");
     }
 
     @Test
     public void shouldGetQuery() throws Exception {
-        assertThat(new HttpRequest("GET", new URI("http://localhost/test?test=one&hello=world")).getQuery())
+        assertThat(new HttpRequest("GET", "/test?test=one&hello=world").getQuery())
                 .isEqualTo("test=one&hello=world");
     }
 }
