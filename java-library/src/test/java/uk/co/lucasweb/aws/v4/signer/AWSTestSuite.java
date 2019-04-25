@@ -77,7 +77,7 @@ public class AWSTestSuite {
             builder.header(header);
         }
 
-        HttpRequest httpRequest = new HttpRequest(request.method, request.pathAndQuery);
+        HttpRequest httpRequest = HttpRequest.Companion.create(request.method, request.pathAndQuery);
         this.signer = builder.build(httpRequest, SERVICE, request.contentHash);
     }
 

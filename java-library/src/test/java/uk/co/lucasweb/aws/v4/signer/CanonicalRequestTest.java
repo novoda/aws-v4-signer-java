@@ -45,7 +45,7 @@ public class CanonicalRequestTest {
 
     @Test
     public void shouldGetGlacierCanonicalRequest() throws Exception {
-        HttpRequest request = new HttpRequest("PUT", "/-/vaults///./examplevault");
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/-/vaults///./examplevault");
         CanonicalHeaders headers = new CanonicalHeaders.Builder()
                 .add("Host", "glacier.us-east-1.amazonaws.com")
                 .add("x-amz-date", "20120525T002453Z")
@@ -58,7 +58,7 @@ public class CanonicalRequestTest {
 
     @Test
     public void shouldGetS3CanonicalRequest() throws Exception {
-        HttpRequest request = new HttpRequest("PUT", "/my-object//example//photo.user");
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/my-object//example//photo.user");
         CanonicalHeaders headers = new CanonicalHeaders.Builder()
                 .add("Host", "s3.us-east-1.amazonaws.com")
                 .add("x-amz-date", "20120525T002453Z")
