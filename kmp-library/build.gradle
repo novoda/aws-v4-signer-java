@@ -32,7 +32,7 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 
-                implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
+                api "io.ktor:ktor-client-core-jvm:$ktor_version"
                 implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
             }
         }
