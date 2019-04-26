@@ -32,7 +32,7 @@ data class HttpRequest(val method: String, val path: String, val query: String?)
             return HttpRequest(method, path, query)
         }
 
-        fun create(method: String, url: Url):HttpRequest {
+        fun create(method: String, url: Url): HttpRequest {
             return HttpRequest(method, url.encodedPath, url.parameters.formUrlEncode())
         }
     }
