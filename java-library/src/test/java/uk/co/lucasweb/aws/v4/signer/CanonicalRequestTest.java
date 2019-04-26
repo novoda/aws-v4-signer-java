@@ -14,8 +14,7 @@ package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
 
-import java.net.URI;
-
+import com.novoda.aws.v4.signer.HttpRequest;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +45,7 @@ public class CanonicalRequestTest {
 
     @Test
     public void shouldGetGlacierCanonicalRequest() throws Exception {
-        HttpRequest request = new HttpRequest("PUT", new URI("https://glacier.us-east-1.amazonaws.com/-/vaults///./examplevault"));
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/-/vaults///./examplevault");
         CanonicalHeaders headers = new CanonicalHeaders.Builder()
                 .add("Host", "glacier.us-east-1.amazonaws.com")
                 .add("x-amz-date", "20120525T002453Z")
@@ -59,7 +58,7 @@ public class CanonicalRequestTest {
 
     @Test
     public void shouldGetS3CanonicalRequest() throws Exception {
-        HttpRequest request = new HttpRequest("PUT", new URI("https://s3.us-east-1.amazonaws.com/my-object//example//photo.user"));
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/my-object//example//photo.user");
         CanonicalHeaders headers = new CanonicalHeaders.Builder()
                 .add("Host", "s3.us-east-1.amazonaws.com")
                 .add("x-amz-date", "20120525T002453Z")

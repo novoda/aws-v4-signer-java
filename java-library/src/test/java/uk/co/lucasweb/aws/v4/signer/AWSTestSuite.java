@@ -12,6 +12,7 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.HttpRequest;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class AWSTestSuite {
             builder.header(header);
         }
 
-        HttpRequest httpRequest = new HttpRequest(request.method, request.pathAndQuery);
+        HttpRequest httpRequest = HttpRequest.Companion.create(request.method, request.pathAndQuery);
         this.signer = builder.build(httpRequest, SERVICE, request.contentHash);
     }
 

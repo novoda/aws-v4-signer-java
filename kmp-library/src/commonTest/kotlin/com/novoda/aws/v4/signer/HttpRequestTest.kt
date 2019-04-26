@@ -10,28 +10,26 @@
 
   Copyright 2016 the original author or authors.
  */
-package uk.co.lucasweb.aws.v4.signer;
+package com.novoda.aws.v4.signer
 
-import org.junit.Test;
+import io.ktor.http.URLBuilder
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-import java.net.URI;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * @author Richard Lucas
- */
-public class HttpRequestTest {
+class HttpRequestTest {
 
     @Test
-    public void shouldGetHttpMethod() throws Exception {
-        assertThat(new HttpRequest("GET", new URI("http://localhost/test")).getMethod())
-                .isEqualTo("GET");
+    fun shouldGetHttpMethod() {
+        assertEquals(HttpRequest.create("GET", "/test").method, "GET")
     }
 
     @Test
-    public void shouldGetQuery() throws Exception {
-        assertThat(new HttpRequest("GET", new URI("http://localhost/test?test=one&hello=world")).getQuery())
-                .isEqualTo("test=one&hello=world");
+    fun shouldGetQueryFromUrl() {
+        assertEquals(HttpRequest.create("GET", URLBuilder("http://localhost/test?test=one&hello=world").build()).query, "test=one&hello=world")
+    }
+
+    @Test
+    fun shouldGetQueryFromPathAndQuery() {
+        assertEquals(HttpRequest.create("GET", "/test?test=one&hello=world").query, "test=one&hello=world")
     }
 }

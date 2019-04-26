@@ -12,10 +12,9 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.HttpRequest;
 import org.junit.Test;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-
-import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +30,7 @@ public class SignerTest {
     public void shouldSignRequest() throws Exception {
         // the values used in this test are from the example http://docs.aws.amazon.com/amazonglacier/latest/dev/amazon-glacier-signing-requests.html
         String hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-        HttpRequest request = new HttpRequest("PUT", new URI("https://glacier.us-east-1.amazonaws.com/-/vaults/examplevault"));
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/-/vaults/examplevault");
 
         String signature = Signer.builder()
                 .awsCredentials(new AwsCredentials(ACCESS_KEY, SECRET_KEY))
@@ -50,7 +49,7 @@ public class SignerTest {
     @Test
     public void shouldSignRequestWithQueryParam() throws Exception {
         String hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-        HttpRequest request = new HttpRequest("GET", new URI("https://examplebucket.s3.amazonaws.com?max-keys=2&prefix=J"));
+        HttpRequest request = HttpRequest.Companion.create("GET", "?max-keys=2&prefix=J");
 
         String signature = Signer.builder()
                 .awsCredentials(new AwsCredentials(ACCESS_KEY, SECRET_KEY))
@@ -71,9 +70,7 @@ public class SignerTest {
         // see http://docs.aws.amazon.com/amazonglacier/latest/dev/amazon-glacier-signing-requests.html
         String contentHash = "79da47e784b181ae04e5b5119fcc953d944acad5e0583fa0899d554a79eb77eb";
         String treeHash = "05c734c3f16b23358bb49c959d1420edac9f28ee844bf9b0580754c0f540acd8";
-        URI uri = new URI("https://glacier.us-east-1.amazonaws.com/-/vaults/dev2/multipart-uploads/j3eqysOZoNF3UiEoN3k_b6bdRGGdzgEfsLoUyZhMIwKRMuDLEYRw2nlCh8QXQ_dzqQMxrgFtmZjatxbFIZ9HpnIUi93B");
-
-        HttpRequest request = new HttpRequest("PUT", uri);
+        HttpRequest request = HttpRequest.Companion.create("PUT", "/-/vaults/dev2/multipart-uploads/j3eqysOZoNF3UiEoN3k_b6bdRGGdzgEfsLoUyZhMIwKRMuDLEYRw2nlCh8QXQ_dzqQMxrgFtmZjatxbFIZ9HpnIUi93B");
 
         String signature = Signer.builder()
                 .awsCredentials(new AwsCredentials(ACCESS_KEY, SECRET_KEY))
