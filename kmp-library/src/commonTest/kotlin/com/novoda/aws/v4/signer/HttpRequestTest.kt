@@ -29,7 +29,37 @@ class HttpRequestTest {
     }
 
     @Test
+    fun shouldGetPathFromUrl() {
+        assertEquals(HttpRequest.create("GET", URLBuilder("http://localhost/test?test=one&hello=world").build()).path, "/test")
+    }
+
+    @Test
     fun shouldGetQueryFromPathAndQuery() {
         assertEquals(HttpRequest.create("GET", "/test?test=one&hello=world").query, "test=one&hello=world")
+    }
+
+    @Test
+    fun shouldGetPathFromPathAndQuery() {
+        assertEquals(HttpRequest.create("GET", "/test?test=one&hello=world").path, "/test")
+    }
+
+    @Test
+    fun shouldGetEmptyAbsolutePathFromUrlWithEmptyAbsolutePath() {
+        assertEquals(HttpRequest.create("GET", URLBuilder("http://localhost/?test=one&hello=world").build()).path, "/")
+    }
+
+    @Test
+    fun shouldGetEmptyAbsolutePathFromEmptyAbsolutePathAndQuery() {
+        assertEquals(HttpRequest.create("GET","/?test=one&hello=world").path, "/")
+    }
+
+    @Test
+    fun shouldGetEmptyPathFromUrlWithEmptyPath() {
+        assertEquals(HttpRequest.create("GET", URLBuilder("http://localhost?test=one&hello=world").build()).path, "")
+    }
+
+    @Test
+    fun shouldGetEmptyPathFromEmptyPathAndQuery() {
+        assertEquals(HttpRequest.create("GET", "?test=one&hello=world").path, "")
     }
 }
