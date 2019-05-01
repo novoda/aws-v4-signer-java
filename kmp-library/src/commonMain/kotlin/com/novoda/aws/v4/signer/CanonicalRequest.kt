@@ -58,8 +58,6 @@ class CanonicalRequest(
     }
 }
 
-private class Parameter(val name: String, val value: String?)
-
 private fun normalizeQuery(rawQuery: String?): String {
     if (rawQuery.isNullOrEmpty()) {
         return ""
@@ -72,10 +70,10 @@ private fun normalizeQuery(rawQuery: String?): String {
      */
     return rawQuery
             .extractQueryParameters()
-            .sortedBy(Parameter::name)
+            .sortedBy(Pair<String, String?>::first)
             .fold(StringBuilder()) { builder, parameter ->
-                val name = parameter.name
-                val value = parameter.value ?: "" // if no value use an empty string as per the spec
+                val name = parameter.first
+                val value = parameter.second ?: "" // if no value use an empty string as per the spec
                 builder.append(URLEncoding.encodeQueryComponent(name))
                         .append(QUERY_PARAMETER_VALUE_SEPARATOR)
                         .append(URLEncoding.encodeQueryComponent(value))
@@ -96,8 +94,8 @@ private fun normalizeQuery(rawQuery: String?): String {
  * the query to parse
  * @return The list of parameters, in the order they were found.
  */
-private fun String.extractQueryParameters(): List<Parameter> {
-    val results = ArrayList<Parameter>()
+private fun String.extractQueryParameters(): List<Pair<String, String?>> {
+    val results = ArrayList<Pair<String, String?>>()
     val endIndex = length - 1
     var index = 0
     while (index in 0..endIndex) {
@@ -112,13 +110,13 @@ private fun String.extractQueryParameters(): List<Parameter> {
         val nameValueSeparatorIndex = indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
         index = if (isNotFound(nameValueSeparatorIndex)) {
             val name = substring(index)
-            results.add(Parameter(name, null))
+            results.add(Pair(name, null))
 
             break
         } else {
             val name = substring(index, nameValueSeparatorIndex)
             val value = substring(nameValueSeparatorIndex + 1, indexOfParameterSeparatorWithin(nameValueSeparatorIndex, endIndex))
-            results.add(Parameter(name, value))
+            results.add(name to value)
 
             index + name.length + 1 + value.length + 1
         }
