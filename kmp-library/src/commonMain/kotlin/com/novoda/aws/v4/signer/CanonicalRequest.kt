@@ -109,27 +109,29 @@ private fun String.extractQueryParameters(): List<Parameter> {
      * one parameter with name "foo&bar" and value "qux". Don't ask me
      * why.
      */
-        val name: String
-        val value: String?
         val nameValueSeparatorIndex = indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
-        if (nameValueSeparatorIndex < 0) {
-            // No value
-            name = substring(index)
-            value = null
+        index = if (isNotFound(nameValueSeparatorIndex)) {
+            val name = substring(index)
+            results.add(Parameter(name, null))
 
-            index = endIndex + 1
+            break
         } else {
-            var parameterSeparatorIndex = indexOf(QUERY_PARAMETER_SEPARATOR, nameValueSeparatorIndex)
-            if (parameterSeparatorIndex < 0) {
-                parameterSeparatorIndex = endIndex + 1
-            }
-            name = substring(index, nameValueSeparatorIndex)
-            value = substring(nameValueSeparatorIndex + 1, parameterSeparatorIndex)
+            val name = substring(index, nameValueSeparatorIndex)
+            val value = substring(nameValueSeparatorIndex + 1, indexOfParameterSeparatorWithin(nameValueSeparatorIndex, endIndex))
+            results.add(Parameter(name, value))
 
-            index = parameterSeparatorIndex + 1
+            index + name.length + 1 + value.length + 1
         }
-
-        results.add(Parameter(name, value))
     }
     return results
 }
+
+private fun String.indexOfParameterSeparatorWithin(startIndex: Int, endIndex: Int): Int {
+    val parameterSeparatorIndex = indexOf(QUERY_PARAMETER_SEPARATOR, startIndex)
+    return when {
+        isNotFound(parameterSeparatorIndex) -> endIndex + 1
+        else -> parameterSeparatorIndex
+    }
+}
+
+private fun isNotFound(index: Int) = index < 0
