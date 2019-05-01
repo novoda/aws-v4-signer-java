@@ -14,6 +14,9 @@ package com.novoda.aws.v4.signer
 
 import com.novoda.aws.v4.signer.encoding.URLEncoding
 
+private const val S3_SERVICE = "s3"
+private const val QUERY_PARAMETER_SEPARATOR = '&'
+private const val QUERY_PARAMETER_VALUE_SEPARATOR = '='
 
 /**
  * @author Richard Lucas
@@ -38,7 +41,7 @@ class CanonicalRequest(
         return get()
     }
 
-    private fun normalizePath(path: String?): String {
+    private fun normalizePath(path: String?): String { 
         if (path == null || path.isEmpty()) {
             return "/"
         }
@@ -53,96 +56,89 @@ class CanonicalRequest(
         }
         return PathUtil.normalize(encoded)
     }
+}
 
-    internal class Parameter(val name: String, val value: String?)
+private class Parameter(val name: String, val value: String?)
 
-    companion object {
-
-        private const val S3_SERVICE = "s3"
-        private const val QUERY_PARAMETER_SEPARATOR = '&'
-        private const val QUERY_PARAMETER_VALUE_SEPARATOR = '='
-
-        private fun normalizeQuery(rawQuery: String?): String {
-            if (rawQuery == null || rawQuery.isEmpty()) {
-                return ""
-            }
-
-            /*
-         * Sort query parameters. Simply sort lexicographically by character
-         * code, which is equivalent to comparing code points (as mandated by
-         * AWS)
-         */
-            val parameters = extractQueryParameters(rawQuery).sortedBy(Parameter::name)
-
-            val builder = StringBuilder()
-            var first = true
-            for (parameter in parameters) {
-                if (first) {
-                    first = false
-                } else {
-                    builder.append(QUERY_PARAMETER_SEPARATOR)
-                }
-                val name = parameter.name
-                var value: String? = parameter.value
-                if (value == null) {
-                    // No value => use an empty string as per the spec
-                    value = ""
-                }
-                builder.append(URLEncoding.encodeQueryComponent(name))
-                        .append(QUERY_PARAMETER_VALUE_SEPARATOR)
-                        .append(URLEncoding.encodeQueryComponent(value))
-            }
-
-            return builder.toString()
-        }
-
-        /**
-         * Extract parameters from a query string, preserving encoding.
-         *
-         *
-         * We can't use Apache HTTP Client's URLEncodedUtils.parse, mainly because
-         * we don't want to decode names/values.
-         *
-         * @param rawQuery
-         * the query to parse
-         * @return The list of parameters, in the order they were found.
-         */
-        private fun extractQueryParameters(rawQuery: String): List<Parameter> {
-            val results = ArrayList<Parameter>()
-            val endIndex = rawQuery.length - 1
-            var index = 0
-            while (0 <= index && index <= endIndex) {
-                /*
-             * Ideally we should first look for '&', then look for '=' before
-             * the '&', but obviously that's not how AWS understand query
-             * parsing; see the test "post-vanilla-query-nonunreserved" in the
-             * test suite. A string such as "?foo&bar=qux" will be understood as
-             * one parameter with name "foo&bar" and value "qux". Don't ask me
-             * why.
-             */
-                val name: String
-                val value: String?
-                val nameValueSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
-                if (nameValueSeparatorIndex < 0) {
-                    // No value
-                    name = rawQuery.substring(index)
-                    value = null
-
-                    index = endIndex + 1
-                } else {
-                    var parameterSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_SEPARATOR, nameValueSeparatorIndex)
-                    if (parameterSeparatorIndex < 0) {
-                        parameterSeparatorIndex = endIndex + 1
-                    }
-                    name = rawQuery.substring(index, nameValueSeparatorIndex)
-                    value = rawQuery.substring(nameValueSeparatorIndex + 1, parameterSeparatorIndex)
-
-                    index = parameterSeparatorIndex + 1
-                }
-
-                results.add(Parameter(name, value))
-            }
-            return results
-        }
+private fun normalizeQuery(rawQuery: String?): String {
+    if (rawQuery == null || rawQuery.isEmpty()) {
+        return ""
     }
+
+    /*
+ * Sort query parameters. Simply sort lexicographically by character
+ * code, which is equivalent to comparing code points (as mandated by
+ * AWS)
+ */
+    val parameters = extractQueryParameters(rawQuery).sortedBy(Parameter::name)
+
+    val builder = StringBuilder()
+    var first = true
+    for (parameter in parameters) {
+        if (first) {
+            first = false
+        } else {
+            builder.append(QUERY_PARAMETER_SEPARATOR)
+        }
+        val name = parameter.name
+        var value: String? = parameter.value
+        if (value == null) {
+            // No value => use an empty string as per the spec
+            value = ""
+        }
+        builder.append(URLEncoding.encodeQueryComponent(name))
+                .append(QUERY_PARAMETER_VALUE_SEPARATOR)
+                .append(URLEncoding.encodeQueryComponent(value))
+    }
+
+    return builder.toString()
+}
+
+/**
+ * Extract parameters from a query string, preserving encoding.
+ *
+ *
+ * We can't use Apache HTTP Client's URLEncodedUtils.parse, mainly because
+ * we don't want to decode names/values.
+ *
+ * @param rawQuery
+ * the query to parse
+ * @return The list of parameters, in the order they were found.
+ */
+private fun extractQueryParameters(rawQuery: String): List<Parameter> {
+    val results = ArrayList<Parameter>()
+    val endIndex = rawQuery.length - 1
+    var index = 0
+    while (0 <= index && index <= endIndex) {
+        /*
+     * Ideally we should first look for '&', then look for '=' before
+     * the '&', but obviously that's not how AWS understand query
+     * parsing; see the test "post-vanilla-query-nonunreserved" in the
+     * test suite. A string such as "?foo&bar=qux" will be understood as
+     * one parameter with name "foo&bar" and value "qux". Don't ask me
+     * why.
+     */
+        val name: String
+        val value: String?
+        val nameValueSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
+        if (nameValueSeparatorIndex < 0) {
+            // No value
+            name = rawQuery.substring(index)
+            value = null
+
+            index = endIndex + 1
+        } else {
+            var parameterSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_SEPARATOR, nameValueSeparatorIndex)
+            if (parameterSeparatorIndex < 0) {
+                parameterSeparatorIndex = endIndex + 1
+            }
+            name = rawQuery.substring(index, nameValueSeparatorIndex)
+            value = rawQuery.substring(nameValueSeparatorIndex + 1, parameterSeparatorIndex)
+
+            index = parameterSeparatorIndex + 1
+        }
+
+        results.add(Parameter(name, value))
+    }
+    return results
 }
