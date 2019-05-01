@@ -41,8 +41,8 @@ class CanonicalRequest(
         return get()
     }
 
-    private fun normalizePath(path: String?): String { 
-        if (path == null || path.isEmpty()) {
+    private fun normalizePath(path: String?): String {
+        if (path.isNullOrEmpty()) {
             return "/"
         }
         // Encode characters as mandated by AWS
@@ -61,15 +61,15 @@ class CanonicalRequest(
 private class Parameter(val name: String, val value: String?)
 
 private fun normalizeQuery(rawQuery: String?): String {
-    if (rawQuery == null || rawQuery.isEmpty()) {
+    if (rawQuery.isNullOrEmpty()) {
         return ""
     }
 
     /*
- * Sort query parameters. Simply sort lexicographically by character
- * code, which is equivalent to comparing code points (as mandated by
- * AWS)
- */
+     * Sort query parameters. Simply sort lexicographically by character
+     * code, which is equivalent to comparing code points (as mandated by
+     * AWS)
+     */
     val parameters = extractQueryParameters(rawQuery).sortedBy(Parameter::name)
 
     val builder = StringBuilder()
