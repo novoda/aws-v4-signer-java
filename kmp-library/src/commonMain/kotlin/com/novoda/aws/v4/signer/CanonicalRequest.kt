@@ -51,18 +51,7 @@ class CanonicalRequest(
              */
             return encoded
         }
-        // Normalize paths such as "/foo/..", "/./", "/foo//bar/", ...
-//        try {
-//            // Use "http://" as a prefix, so that paths such as "//" are deemed syntactically correct
-//            return URI("http://$encoded").normalize().rawPath
-//        } catch (e: URISyntaxException) {
-//            throw IllegalStateException(
-//                    "The encoded path '" + path + "' was deemed syntactically incorrect;"
-//                            + " there is probably an internal issue with the encoding algorithm"
-//            )
-//        }
-
-        return ""
+        return PathUtil.normalize(encoded)
     }
 
     internal class Parameter(val name: String, val value: String?)
