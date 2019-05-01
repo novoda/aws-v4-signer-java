@@ -70,28 +70,19 @@ private fun normalizeQuery(rawQuery: String?): String {
      * code, which is equivalent to comparing code points (as mandated by
      * AWS)
      */
-    val parameters = extractQueryParameters(rawQuery).sortedBy(Parameter::name)
-
-    val builder = StringBuilder()
-    var first = true
-    for (parameter in parameters) {
-        if (first) {
-            first = false
-        } else {
-            builder.append(QUERY_PARAMETER_SEPARATOR)
-        }
-        val name = parameter.name
-        var value: String? = parameter.value
-        if (value == null) {
-            // No value => use an empty string as per the spec
-            value = ""
-        }
-        builder.append(URLEncoding.encodeQueryComponent(name))
-                .append(QUERY_PARAMETER_VALUE_SEPARATOR)
-                .append(URLEncoding.encodeQueryComponent(value))
-    }
-
-    return builder.toString()
+    return rawQuery
+            .extractQueryParameters()
+            .sortedBy(Parameter::name)
+            .fold(StringBuilder()) { builder, parameter ->
+                val name = parameter.name
+                val value = parameter.value ?: "" // if no value use an empty string as per the spec
+                builder.append(URLEncoding.encodeQueryComponent(name))
+                        .append(QUERY_PARAMETER_VALUE_SEPARATOR)
+                        .append(URLEncoding.encodeQueryComponent(value))
+                        .append(QUERY_PARAMETER_SEPARATOR)
+            }
+            .removeSuffix(QUERY_PARAMETER_SEPARATOR.toString())
+            .toString()
 }
 
 /**
@@ -101,15 +92,15 @@ private fun normalizeQuery(rawQuery: String?): String {
  * We can't use Apache HTTP Client's URLEncodedUtils.parse, mainly because
  * we don't want to decode names/values.
  *
- * @param rawQuery
+ * @param this@extractQueryParameters
  * the query to parse
  * @return The list of parameters, in the order they were found.
  */
-private fun extractQueryParameters(rawQuery: String): List<Parameter> {
+private fun String.extractQueryParameters(): List<Parameter> {
     val results = ArrayList<Parameter>()
-    val endIndex = rawQuery.length - 1
+    val endIndex = length - 1
     var index = 0
-    while (0 <= index && index <= endIndex) {
+    while (index in 0..endIndex) {
         /*
      * Ideally we should first look for '&', then look for '=' before
      * the '&', but obviously that's not how AWS understand query
@@ -120,20 +111,20 @@ private fun extractQueryParameters(rawQuery: String): List<Parameter> {
      */
         val name: String
         val value: String?
-        val nameValueSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
+        val nameValueSeparatorIndex = indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
         if (nameValueSeparatorIndex < 0) {
             // No value
-            name = rawQuery.substring(index)
+            name = substring(index)
             value = null
 
             index = endIndex + 1
         } else {
-            var parameterSeparatorIndex = rawQuery.indexOf(QUERY_PARAMETER_SEPARATOR, nameValueSeparatorIndex)
+            var parameterSeparatorIndex = indexOf(QUERY_PARAMETER_SEPARATOR, nameValueSeparatorIndex)
             if (parameterSeparatorIndex < 0) {
                 parameterSeparatorIndex = endIndex + 1
             }
-            name = rawQuery.substring(index, nameValueSeparatorIndex)
-            value = rawQuery.substring(nameValueSeparatorIndex + 1, parameterSeparatorIndex)
+            name = substring(index, nameValueSeparatorIndex)
+            value = substring(nameValueSeparatorIndex + 1, parameterSeparatorIndex)
 
             index = parameterSeparatorIndex + 1
         }
