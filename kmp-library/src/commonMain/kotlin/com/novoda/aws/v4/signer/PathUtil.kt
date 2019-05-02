@@ -2,74 +2,72 @@ package com.novoda.aws.v4.signer
 
 internal object PathUtil {
 
-    fun normalize(ps: String): String {
-        // Does this path need normalization?
-        val ns = needsNormalization(ps)        // Number of segments
-        if (ns < 0)
-        // Nope -- just return it
-            return ps
+    fun normalize(inputPath: String): String {
+        val segmentCount = inputPath.getSegmentCount()
+        if (isNormalized(segmentCount)) {
+            return inputPath
+        }
 
-        val path = CharArray(ps.length) { ps[it] }         // Path in char-array form
+        val path = CharArray(inputPath.length) { inputPath[it] }
 
-        // Split path into segments
-        val segs = IntArray(ns)               // Segment-index array
+        val segments = IntArray(segmentCount)
+        split(path, segments)
+        removeDots(path, segments)
+        maybeAddLeadingDot(path, segments)
 
-        split(path, segs)
-
-        // Remove dots
-        removeDots(path, segs)
-
-        // Prevent scheme-name confusion
-        maybeAddLeadingDot(path, segs)
-
-        // Join the remaining segments and return the result
-        val s = String(path, 0, join(path, segs))
-        return if (s == ps) {
-            // string was already normalized
-            ps
-        } else s
+        val normalizedPath = String(path, 0, join(path, segments))
+        return if (normalizedPath == inputPath) {
+            inputPath
+        } else {
+            normalizedPath
+        }
     }
 
-    private fun needsNormalization(path: String): Int {
+    private fun isNormalized(segmentCount: Int) = segmentCount < 0
+
+    private fun String.getSegmentCount(): Int {
         var normal = true
-        var ns = 0                     // Number of segments
-        val end = path.length - 1    // Index of last char in path
-        var p = 0                      // Index of next char in path
+        var segmentCount = 0
+        val endIndex = length - 1
+        var nextCharIndex = 0
 
         // Skip initial slashes
-        while (p <= end) {
-            if (path[p] != '/') break
-            p++
+        while (nextCharIndex <= endIndex) {
+            if (this[nextCharIndex] != '/') break
+            nextCharIndex++
         }
-        if (p > 1) normal = false
+        if (nextCharIndex > 1) normal = false
 
         // Scan segments
-        while (p <= end) {
+        while (nextCharIndex <= endIndex) {
 
-            // Looking at "." or ".." ?
-            if (path[p] == '.' && (p == end || path[p + 1] == '/' || path[p + 1] == '.' && (p + 1 == end || path[p + 2] == '/'))) {
+            if (containsDotOrTwoDotsNext(nextCharIndex, endIndex)) {
                 normal = false
             }
-            ns++
+            segmentCount++
 
             // Find beginning of next segment
-            while (p <= end) {
-                if (path[p++] != '/')
+            while (nextCharIndex <= endIndex) {
+                if (this[nextCharIndex++] != '/')
                     continue
 
                 // Skip redundant slashes
-                while (p <= end) {
-                    if (path[p] != '/') break
+                while (nextCharIndex <= endIndex) {
+                    if (this[nextCharIndex] != '/') break
                     normal = false
-                    p++
+                    nextCharIndex++
                 }
 
                 break
             }
         }
 
-        return if (normal) -1 else ns
+        return if (normal) -1 else segmentCount
     }
+
+    // Looking at "." or ".." ?
+    private fun String.containsDotOrTwoDotsNext(nextCharIndex: Int, endIndex: Int) =
+            this[nextCharIndex] == '.' && (nextCharIndex == endIndex || this[nextCharIndex + 1] == '/' || this[nextCharIndex + 1] == '.' && (nextCharIndex + 1 == endIndex || this[nextCharIndex + 2] == '/'))
 
     private fun split(path: CharArray, segs: IntArray) {
         val end = path.size - 1      // Index of last char in path
@@ -220,6 +218,7 @@ internal object PathUtil {
     // DEVIATION: If the normalized path is relative, and if the first
     // segment could be parsed as a scheme name, then prepend a "." segment
     //
+    // Prevent scheme-name confusion
     private fun maybeAddLeadingDot(path: CharArray, segs: IntArray) {
 
         if (path[0] == '\u0000')
