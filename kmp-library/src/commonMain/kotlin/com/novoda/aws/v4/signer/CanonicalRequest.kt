@@ -96,39 +96,49 @@ private fun normalizeQuery(rawQuery: String?): String {
  */
 private fun String.extractQueryParameters(): List<Pair<String, String?>> {
     val results = ArrayList<Pair<String, String?>>()
-    val endIndex = length - 1
     var index = 0
-    while (index in 0..endIndex) {
+    while (index in 0 until length) {
         /*
-     * Ideally we should first look for '&', then look for '=' before
-     * the '&', but obviously that's not how AWS understand query
-     * parsing; see the test "post-vanilla-query-nonunreserved" in the
-     * test suite. A string such as "?foo&bar=qux" will be understood as
-     * one parameter with name "foo&bar" and value "qux". Don't ask me
-     * why.
-     */
-        val nameValueSeparatorIndex = indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, index)
-        index = if (isNotFound(nameValueSeparatorIndex)) {
-            val name = substring(index)
-            results.add(Pair(name, null))
-
-            break
-        } else {
-            val name = substring(index, nameValueSeparatorIndex)
-            val value = substring(nameValueSeparatorIndex + 1, indexOfParameterSeparatorWithin(nameValueSeparatorIndex, endIndex))
-            results.add(name to value)
-
-            index + name.length + 1 + value.length + 1
+         * Ideally we should first look for '&', then look for '=' before
+         * the '&', but obviously that's not how AWS understand query
+         * parsing; see the test "post-vanilla-query-nonunreserved" in the
+         * test suite. A string such as "?foo&bar=qux" will be understood as
+         * one parameter with name "foo&bar" and value "qux". Don't ask me
+         * why.
+         */
+        index = when {
+            isNotFound(indexOfValueSeparator(index)) -> addLastNameWithoutValue(index, results)
+            else -> addNameValuePair(index, results)
         }
     }
     return results
 }
 
-private fun String.indexOfParameterSeparatorWithin(startIndex: Int, endIndex: Int): Int {
+private fun String.addLastNameWithoutValue(startIndex: Int, results: ArrayList<Pair<String, String?>>): Int {
+    val name = substring(startIndex)
+    results.add(name to null)
+
+    return length
+}
+
+private fun String.addNameValuePair(startIndex: Int, results: ArrayList<Pair<String, String?>>): Int {
+    val nameEndIndex = indexOfValueSeparator(startIndex)
+    val name = substring(startIndex, nameEndIndex)
+    val valueEndIndex = indexOfParameterSeparator(nameEndIndex)
+    val value = substring(nameEndIndex + 1, valueEndIndex)
+    results.add(name to value)
+
+    return valueEndIndex + 1
+}
+
+private fun String.indexOfValueSeparator(startIndex: Int) = indexOf(QUERY_PARAMETER_VALUE_SEPARATOR, startIndex)
+
+private fun String.indexOfParameterSeparator(startIndex: Int): Int {
     val parameterSeparatorIndex = indexOf(QUERY_PARAMETER_SEPARATOR, startIndex)
-    return when {
-        isNotFound(parameterSeparatorIndex) -> endIndex + 1
-        else -> parameterSeparatorIndex
+    return if (isNotFound(parameterSeparatorIndex)) {
+        length
+    } else {
+        parameterSeparatorIndex
     }
 }
 
