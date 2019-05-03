@@ -2,72 +2,83 @@ package com.novoda.aws.v4.signer
 
 internal object PathUtil {
 
-    fun normalize(inputPath: String): String {
-        val segmentCount = inputPath.getSegmentCount()
-        if (isNormalized(segmentCount)) {
-            return inputPath
+    fun normalize(path: String): String {
+        val segmentCount = path.getSegmentCount()
+        if (segmentCount < 0) {
+            return path
         }
 
-        val path = CharArray(inputPath.length) { inputPath[it] }
+        val pathArray = CharArray(path.length) { path[it] }
 
         val segments = IntArray(segmentCount)
-        split(path, segments)
-        removeDots(path, segments)
-        maybeAddLeadingDot(path, segments)
+        split(pathArray, segments)
+        removeDots(pathArray, segments)
+        maybeAddLeadingDot(pathArray, segments)
 
-        val normalizedPath = String(path, 0, join(path, segments))
-        return if (normalizedPath == inputPath) {
-            inputPath
-        } else {
-            normalizedPath
+        return String(pathArray, 0, join(pathArray, segments))
+    }
+
+    private fun String.getSegmentCount(): Int {
+        val startIndex = 0
+        return skipSlashes(startIndex)
+                .run { scanSegments(first, second) }
+    }
+
+    private fun String.scanSegments(index: Int, isNormalInput: Boolean): Int {
+        var nextIndex = index
+        var isNormal = isNormalInput
+        var segmentCount = 0
+
+        while (nextIndex < length) {
+            segmentCount++
+
+            isNormal = isNormal && !hasDotOrTwoDotsNext(nextIndex)
+
+            findNextSegmentStart(nextIndex).apply {
+                nextIndex = first
+                isNormal = isNormal && second
+            }
+        }
+        return when {
+            isNormal -> -1
+            else -> segmentCount
         }
     }
 
-    private fun isNormalized(segmentCount: Int) = segmentCount < 0
-
-    private fun String.getSegmentCount(): Int {
-        var normal = true
-        var segmentCount = 0
-        val endIndex = length - 1
-        var nextCharIndex = 0
-
-        // Skip initial slashes
-        while (nextCharIndex <= endIndex) {
-            if (this[nextCharIndex] != '/') break
-            nextCharIndex++
-        }
-        if (nextCharIndex > 1) normal = false
-
-        // Scan segments
-        while (nextCharIndex <= endIndex) {
-
-            if (containsDotOrTwoDotsNext(nextCharIndex, endIndex)) {
-                normal = false
+    private fun String.findNextSegmentStart(index: Int): Pair< Int, Boolean> {
+        var nextIndex = index
+        var isNormal = true
+        while (nextIndex < length) {
+            if (this[nextIndex++] != '/') {
+                continue
             }
-            segmentCount++
 
-            // Find beginning of next segment
-            while (nextCharIndex <= endIndex) {
-                if (this[nextCharIndex++] != '/')
-                    continue
-
-                // Skip redundant slashes
-                while (nextCharIndex <= endIndex) {
-                    if (this[nextCharIndex] != '/') break
-                    normal = false
-                    nextCharIndex++
-                }
-
-                break
+            skipSlashes(nextIndex).apply {
+                nextIndex = first
+                isNormal = isNormal && second
             }
-        }
 
-        return if (normal) -1 else segmentCount
+            break
+        }
+        return Pair(nextIndex, isNormal)
+    }
+
+    private fun String.skipSlashes(index: Int): Pair<Int, Boolean> {
+        var nextIndex = index
+        var isNormal = true
+        while (nextIndex < length) {
+            if (this[nextIndex] != '/') break
+            isNormal = false
+            nextIndex++
+        }
+        return Pair(nextIndex, isNormal)
     }
 
     // Looking at "." or ".." ?
-    private fun String.containsDotOrTwoDotsNext(nextCharIndex: Int, endIndex: Int) =
-            this[nextCharIndex] == '.' && (nextCharIndex == endIndex || this[nextCharIndex + 1] == '/' || this[nextCharIndex + 1] == '.' && (nextCharIndex + 1 == endIndex || this[nextCharIndex + 2] == '/'))
+    private fun String.hasDotOrTwoDotsNext(index: Int): Boolean {
+        val endIndex = length - 1
+        return this[index] == '.' && (index == endIndex || this[index + 1] == '/' || this[index + 1] == '.' && (index + 1 == endIndex || this[index + 2] == '/'))
+    }
 
     private fun split(path: CharArray, segs: IntArray) {
         val end = path.size - 1      // Index of last char in path
