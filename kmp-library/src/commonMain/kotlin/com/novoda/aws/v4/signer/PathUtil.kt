@@ -15,7 +15,7 @@ internal object PathUtil {
         removeDots(pathArray, segments)
         maybeAddLeadingDot(pathArray, segments)
 
-        return String(pathArray, 0, join(pathArray, segments))
+        return String(pathArray, 0, pathArray.join(segments))
     }
 
     private fun String.getSegmentCount(): Int {
@@ -122,50 +122,62 @@ internal object PathUtil {
     // path.
     //
     // Preconditions:
-    //   segs[i] == -1 implies segment i is to be ignored
+    //   segments[i] == -1 implies segment i is to be ignored
     //   path computed by split, as above, with '\0' having replaced '/'
     //
     // Postconditions:
     //   path[0] .. path[return value] == Resulting path
     //
-    private fun join(path: CharArray, segs: IntArray): Int {
-        val ns = segs.size           // Number of segments
-        val end = path.size - 1      // Index of last char in path
-        var p = 0                      // Index of next path char to write
+    private fun CharArray.join(segments: IntArray): Int {
+        var writeIndex = 0
 
-        if (path[p] == '\u0000') {
+        if (isNullAt(writeIndex)) {
             // Restore initial slash for absolute paths
-            path[p++] = '/'
+            writeIndex = restoreSlashAt(writeIndex)
         }
 
-        for (i in 0 until ns) {
-            var q = segs[i]            // Current segment
-            if (q == -1)
-            // Ignore this segment
-                continue
-
-            if (p == q) {
-                // We're already at this segment, so just skip to its end
-                while (p <= end && path[p] != '\u0000')
-                    p++
-                if (p <= end) {
-                    // Preserve trailing slash
-                    path[p++] = '/'
+        segments.asSequence()
+                .filter(PathUtil::isSegmentNotIgnored)
+                .forEach { segmentStart ->
+                    writeIndex = when {
+                        writeIndex == segmentStart -> skipToSegmentEnd(writeIndex)
+                        writeIndex < segmentStart -> copyDownFromSegmentStart(segmentStart, writeIndex)
+                        else -> error("Unexpected character write index") // ASSERT false
+                    }
                 }
-            } else if (p < q) {
-                // Copy q down to p
-                while (q <= end && path[q] != '\u0000')
-                    path[p++] = path[q++]
-                if (q <= end) {
-                    // Preserve trailing slash
-                    path[p++] = '/'
-                }
-            } else
-                error("") // ASSERT false
-        }
 
-        return p
+        return writeIndex
     }
+
+    private fun isSegmentNotIgnored(segmentIndex: Int) = segmentIndex != -1
+
+    private fun CharArray.skipToSegmentEnd(index: Int): Int {
+        for (writeIndex in index until size) {
+            if (isNullAt(writeIndex)) {
+                return restoreSlashAt(writeIndex)
+            }
+        }
+        return size
+    }
+
+    private fun CharArray.copyDownFromSegmentStart(segmentStart: Int, index: Int): Int {
+        var writeIndex = index
+        for (segmentIndex in segmentStart until size) {
+            if (isNullAt(segmentIndex)) {
+                return restoreSlashAt(writeIndex)
+            }
+            this[writeIndex] = this[segmentIndex]
+            writeIndex++
+        }
+        return writeIndex
+    }
+
+    private fun CharArray.restoreSlashAt(index: Int): Int {
+        this[index] = '/'
+        return index + 1
+    }
+
+    private fun CharArray.isNullAt(p: Int) = this[p] == '\u0000'
 
 
     // Remove "." segments from the given path, and remove segment pairs
