@@ -11,7 +11,7 @@ internal object PathUtil {
         val pathArray = CharArray(path.length) { path[it] }
 
         val segments = IntArray(segmentCount)
-        split(pathArray, segments)
+        pathArray.split(segments)
         removeDots(pathArray, segments)
         maybeAddLeadingDot(pathArray, segments)
 
@@ -45,7 +45,7 @@ internal object PathUtil {
         }
     }
 
-    private fun String.findNextSegmentStart(index: Int): Pair< Int, Boolean> {
+    private fun String.findNextSegmentStart(index: Int): Pair<Int, Boolean> {
         var nextIndex = index
         var isNormal = true
         while (nextIndex < length) {
@@ -84,39 +84,36 @@ internal object PathUtil {
 
     private fun String.isDotAt(index: Int) = this[index] == '.'
 
-    private fun split(path: CharArray, segs: IntArray) {
-        val end = path.size - 1      // Index of last char in path
-        var p = 0                      // Index of next char in path
-        var i = 0                      // Index of current segment
+    private fun CharArray.split(segments: IntArray) {
+        var currentSegmentIndex = 0
+        var characterIndex = skipSlashes(0)
 
-        // Skip initial slashes
-        while (p <= end) {
-            if (path[p] != '/') break
-            path[p] = '\u0000'
-            p++
+        while (characterIndex < size) {
+            segments[currentSegmentIndex++] = characterIndex++
+            characterIndex = findBeginningOfNextSegment(characterIndex)
         }
 
-        while (p <= end) {
+        check(currentSegmentIndex == segments.size) //ASSERT
+    }
 
-            // Note start of segment
-            segs[i++] = p++
-
-            // Find beginning of next segment
-            while (p <= end) {
-                if (path[p++] != '/')
-                    continue
-                path[p - 1] = '\u0000'
-
-                // Skip redundant slashes
-                while (p <= end) {
-                    if (path[p] != '/') break
-                    path[p++] = '\u0000'
-                }
-                break
+    private fun CharArray.findBeginningOfNextSegment(startIndex: Int): Int {
+        for (index in startIndex until size) {
+            if (this[index] == '/') {
+                return skipSlashes(index)
             }
         }
+        return size
+    }
 
-        check(i == segs.size) //ASSERT
+    private fun CharArray.skipSlashes(startIndex: Int): Int {
+        for (index in startIndex until size) {
+            if (this[index] == '/') {
+                this[index] = '\u0000'
+            } else {
+                return index
+            }
+        }
+        return size
     }
 
     // Join the segments in the given path according to the given segment-index
