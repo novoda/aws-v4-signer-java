@@ -32,7 +32,7 @@ internal object PathUtil {
         while (nextIndex < length) {
             segmentCount++
 
-            isNormal = isNormal && !hasDotOrTwoDotsNext(nextIndex)
+            isNormal = isNormal && !hasDotOrTwoDotsAt(nextIndex)
 
             findNextSegmentStart(nextIndex).apply {
                 nextIndex = first
@@ -75,10 +75,14 @@ internal object PathUtil {
     }
 
     // Looking at "." or ".." ?
-    private fun String.hasDotOrTwoDotsNext(index: Int): Boolean {
-        val endIndex = length - 1
-        return this[index] == '.' && (index == endIndex || this[index + 1] == '/' || this[index + 1] == '.' && (index + 1 == endIndex || this[index + 2] == '/'))
+    private fun String.hasDotOrTwoDotsAt(index: Int): Boolean {
+        return isDotAt(index) && (isLastOrFollowedByPathSeparator(index)
+                || isDotAt(index + 1) && isLastOrFollowedByPathSeparator(index + 1))
     }
+
+    private fun String.isLastOrFollowedByPathSeparator(index: Int) = index == length - 1 || this[index + 1] == '/'
+
+    private fun String.isDotAt(index: Int) = this[index] == '.'
 
     private fun split(path: CharArray, segs: IntArray) {
         val end = path.size - 1      // Index of last char in path
