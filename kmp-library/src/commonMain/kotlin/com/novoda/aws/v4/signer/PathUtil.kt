@@ -9,17 +9,15 @@ internal object PathUtil {
         if (segmentCount < 0) {
             return path
         }
-
         val segments = IntArray(segmentCount)
-        val pathArray = CharArray(path.length) { path[it] }
+
+        return CharArray(path.length) { path[it] }
                 .apply {
                     split(segments)
                     removeDots(segments)
+                    maybeAddLeadingDot(segments)
                 }
-
-        maybeAddLeadingDot(pathArray, segments)
-
-        return String(pathArray, 0, pathArray.join(segments))
+                .let { String(it, 0, it.join(segments)) }
     }
 
     private fun String.getSegmentCount(): Int {
@@ -181,7 +179,7 @@ internal object PathUtil {
         return index + 1
     }
 
-    private fun CharArray.isNullAt(p: Int) = this[p] == '\u0000'
+    private fun CharArray.isNullAt(index: Int) = this[index] == '\u0000'
 
 
     // Remove "." segments from the given path, and remove segment pairs
@@ -253,35 +251,40 @@ internal object PathUtil {
     // segment could be parsed as a scheme name, then prepend a "." segment
     //
     // Prevent scheme-name confusion
-    private fun maybeAddLeadingDot(path: CharArray, segs: IntArray) {
-
-        if (path[0] == '\u0000')
-        // The path is absolute
-            return
-
-        val ns = segs.size
-        var f = 0                      // Index of first segment
-        while (f < ns) {
-            if (segs[f] >= 0)
-                break
-            f++
-        }
-        if (f >= ns || f == 0)
-        // The path is empty, or else the original first segment survived,
-        // in which case we already know that no leading "." is needed
-            return
-
-        var p = segs[f]
-        while (p < path.size && path[p] != ':' && path[p] != '\u0000') p++
-        if (p >= path.size || path[p] == '\u0000')
-        // No colon in first segment, so no "." needed
-            return
+    private fun CharArray.maybeAddLeadingDot(segments: IntArray) {
+        if (noNeedForLeadingDot(segments)) return
 
         // At this point we know that the first segment is unused,
         // hence we can insert a "." segment at that position
-        path[0] = '.'
-        path[1] = '\u0000'
-        segs[0] = 0
+        this[0] = '.'
+        this[1] = '\u0000'
+        segments[0] = 0
+    }
+
+    private fun CharArray.noNeedForLeadingDot(segments: IntArray): Boolean {
+        if (isNullAt(0)) {
+            return true
+        }
+        return segments.findFirstValidSegmentIndex()
+                .let { it >= segments.size || it == 0 || doesNotContainColonInSegment(segments[it]) }
+    }
+
+    private fun CharArray.doesNotContainColonInSegment(index: Int): Boolean {
+        for (pathIndex in index until size) {
+            if (this[pathIndex] == ':' || isNullAt(pathIndex)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun IntArray.findFirstValidSegmentIndex(): Int {
+        for (segmentIndex in 0 until size) {
+            if (this[segmentIndex] >= 0) {
+                return segmentIndex
+            }
+        }
+        return size
     }
 
 }
