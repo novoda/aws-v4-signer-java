@@ -11,14 +11,16 @@ internal object PathUtil {
         }
         val segments = IntArray(segmentCount)
 
-        return CharArray(path.length) { path[it] }
+        return path.toCharArray()
                 .apply {
                     split(segments)
                     removeDots(segments)
                     maybeAddLeadingDot(segments)
                 }
-                .let { String(it, 0, it.join(segments)) }
+                .run { String(this, 0, join(segments)) }
     }
+
+    private fun String.toCharArray() = CharArray(length) { this[it] }
 
     private fun String.getSegmentCount(): Int {
         val startIndex = 0
