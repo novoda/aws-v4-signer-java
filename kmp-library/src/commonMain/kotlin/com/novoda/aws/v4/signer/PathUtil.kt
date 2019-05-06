@@ -1,5 +1,7 @@
 package com.novoda.aws.v4.signer
 
+private const val IGNORED = -1
+
 internal object PathUtil {
 
     fun normalize(path: String): String {
@@ -8,11 +10,13 @@ internal object PathUtil {
             return path
         }
 
-        val pathArray = CharArray(path.length) { path[it] }
-
         val segments = IntArray(segmentCount)
-        pathArray.split(segments)
-        removeDots(pathArray, segments)
+        val pathArray = CharArray(path.length) { path[it] }
+                .apply {
+                    split(segments)
+                    removeDots(segments)
+                }
+
         maybeAddLeadingDot(pathArray, segments)
 
         return String(pathArray, 0, pathArray.join(segments))
@@ -149,7 +153,7 @@ internal object PathUtil {
         return writeIndex
     }
 
-    private fun isSegmentNotIgnored(segmentIndex: Int) = segmentIndex != -1
+    private fun isSegmentNotIgnored(segmentIndex: Int) = segmentIndex != IGNORED
 
     private fun CharArray.skipToSegmentEnd(index: Int): Int {
         for (writeIndex in index until size) {
@@ -183,60 +187,66 @@ internal object PathUtil {
     // Remove "." segments from the given path, and remove segment pairs
     // consisting of a non-".." segment followed by a ".." segment.
     //
-    private fun removeDots(path: CharArray, segs: IntArray) {
-        val ns = segs.size
-        val end = path.size - 1
-
-        var i = 0
-        while (i < ns) {
-            var dots = 0               // Number of dots found (0, 1, or 2)
-
-            // Find next occurrence of "." or ".."
-            do {
-                val p = segs[i]
-                if (path[p] == '.') {
-                    if (p == end) {
-                        dots = 1
-                        break
-                    } else if (path[p + 1] == '\u0000') {
-                        dots = 1
-                        break
-                    } else if (path[p + 1] == '.' && (p + 1 == end || path[p + 2] == '\u0000')) {
-                        dots = 2
-                        break
-                    }
-                }
-                i++
-            } while (i < ns)
-            if (i > ns || dots == 0)
-                break
-
-            if (dots == 1) {
-                // Remove this occurrence of "."
-                segs[i] = -1
-            } else {
-                // If there is a preceding non-".." segment, remove both that
-                // segment and this occurrence of ".."; otherwise, leave this
-                // ".." segment as-is.
-                var j: Int
-                j = i - 1
-                while (j >= 0) {
-                    if (segs[j] != -1) break
-                    j--
-                }
-                if (j >= 0) {
-                    val q = segs[j]
-                    if (!(path[q] == '.'
-                                    && path[q + 1] == '.'
-                                    && path[q + 2] == '\u0000')) {
-                        segs[i] = -1
-                        segs[j] = -1
-                    }
-                }
-            }
-            i++
+    private fun CharArray.removeDots(segments: IntArray) {
+        var segmentIndex = 0
+        while (segmentIndex < segments.size) {
+            segmentIndex = findNextSegmentWithDots(segmentIndex, segments)
+                    .run { ignoreSegmentWithDots(first, second, segments) }
         }
     }
+
+    private fun CharArray.findNextSegmentWithDots(index: Int, segments: IntArray): Pair<Dots, Int> {
+        // Find next occurrence of "." or ".."
+        for (segmentIndex in index until segments.size) {
+            val segmentStartIndex = segments[segmentIndex]
+            if (isDotAt(segmentStartIndex)) {
+                if (isEndAt(segmentStartIndex) || isNullAt(segmentStartIndex + 1)) {
+                    return Dots.ONE to segmentIndex
+                } else if (isDotAt(segmentStartIndex + 1) && (isEndAt(segmentStartIndex + 1) || isNullAt(segmentStartIndex + 2))) {
+                    return Dots.TWO to segmentIndex
+                }
+            }
+        }
+        return Dots.NONE to segments.size
+    }
+
+    private fun CharArray.ignoreSegmentWithDots(dots: Dots, segmentIndex: Int, segments: IntArray): Int {
+        return when {
+            segmentIndex >= segments.size || dots == Dots.NONE -> segments.size
+            dots == Dots.ONE -> {// Remove this occurrence of "."
+                segments[segmentIndex] = IGNORED
+                segmentIndex + 1
+            }
+            else -> {// If there is a preceding non-".." segment, remove both that
+                // segment and this occurrence of ".."; otherwise, leave this
+                // ".." segment as-is.
+                segments.findPreviousNotIgnoredSegmentIndex(segmentIndex)
+                        .let { if (it >= 0 && isNotSegmentWithOnlyDotsAt(segments[it])) it else null }
+                        ?.also {
+                            segments[segmentIndex] = IGNORED
+                            segments[it] = IGNORED
+                        }
+                segmentIndex + 1
+            }
+        }
+    }
+
+    private fun CharArray.isDotAt(index: Int) = this[index] == '.'
+
+    private fun CharArray.isNotSegmentWithOnlyDotsAt(index: Int) = !(isDotAt(index) && isDotAt(index + 1) && isNullAt(index + 2))
+
+    private fun IntArray.findPreviousNotIgnoredSegmentIndex(index: Int): Int {
+        for (previousSegmentIndex in index - 1 downTo 0) {
+            if (isNotIgnoredAt(previousSegmentIndex)) {
+                return previousSegmentIndex
+            }
+        }
+        return -1
+    }
+
+    private fun IntArray.isNotIgnoredAt(index: Int) = this[index] != IGNORED
+
+    private fun CharArray.isEndAt(index: Int) = index == size - 1
 
 
     // DEVIATION: If the normalized path is relative, and if the first
@@ -274,4 +284,8 @@ internal object PathUtil {
         segs[0] = 0
     }
 
+}
+
+private enum class Dots {
+    NONE, ONE, TWO
 }
