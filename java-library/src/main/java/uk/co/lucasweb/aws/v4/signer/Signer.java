@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
 
 import static com.novoda.aws.v4.signer.hash.StringExtensionsKt.toUtf8ByteArray;
 
@@ -153,7 +152,10 @@ public class Signer {
         }
 
         private AwsCredentials getAwsCredentials() {
-            return awsCredentials == null ? new AwsCredentialsProviderChain().getCredentials() : awsCredentials;
+            if (awsCredentials == null) {
+                throw new IllegalStateException("Missing required aws credentials");
+            }
+            return awsCredentials;
         }
 
         private CanonicalHeaders getCanonicalHeaders() {
