@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
 
 /**
  * @author Yoann Rodiere
