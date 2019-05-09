@@ -12,6 +12,8 @@
  */
 package uk.co.lucasweb.aws.v4.signer.credentials;
 
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

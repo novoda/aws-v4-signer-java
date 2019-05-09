@@ -12,6 +12,8 @@
  */
 package uk.co.lucasweb.aws.v4.signer.credentials;
 
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
+
 import org.jetbrains.annotations.Nullable;
 import uk.co.lucasweb.aws.v4.signer.SigningException;
 
