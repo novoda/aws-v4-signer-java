@@ -14,7 +14,10 @@ package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
 import com.novoda.aws.v4.signer.CanonicalRequest;
+import com.novoda.aws.v4.signer.CredentialScope;
+import com.novoda.aws.v4.signer.Header;
 import com.novoda.aws.v4.signer.HttpRequest;
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
 import com.novoda.aws.v4.signer.hash.ByteArrayExtensionsKt;
 import com.novoda.aws.v4.signer.hash.Hmac256Encoder;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
@@ -23,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
 import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentialsProviderChain;
 
 import static com.novoda.aws.v4.signer.hash.StringExtensionsKt.toUtf8ByteArray;
