@@ -2,6 +2,9 @@ package com.novoda.aws.v4.signer
 
 private const val IGNORED = -1
 
+/**
+ * Contains normalization logic from java.net.URI.normalize()
+ */
 internal object PathUtil {
 
     fun normalize(path: String): String {
