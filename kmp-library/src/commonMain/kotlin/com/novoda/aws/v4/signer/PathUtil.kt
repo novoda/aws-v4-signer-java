@@ -25,11 +25,8 @@ internal object PathUtil {
 
     private fun String.toCharArray() = CharArray(length) { this[it] }
 
-    private fun String.getSegmentCount(): Int {
-        val startIndex = 0
-        return skipSlashes(startIndex)
-                .run { scanSegments(first, second) }
-    }
+    private fun String.getSegmentCount() = skipSlashes(0)
+            .run { scanSegments(index = first, isNormalInput = second) }
 
     private fun String.scanSegments(index: Int, isNormalInput: Boolean): Int {
         var nextIndex = index
