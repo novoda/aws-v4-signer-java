@@ -12,6 +12,7 @@
  */
 package uk.co.lucasweb.aws.v4.signer;
 
+import com.novoda.aws.v4.signer.Header;
 import com.novoda.aws.v4.signer.HttpRequest;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
 
@@ -35,7 +36,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import uk.co.lucasweb.aws.v4.signer.credentials.AwsCredentials;
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
 
 /**
  * @author Yoann Rodiere
