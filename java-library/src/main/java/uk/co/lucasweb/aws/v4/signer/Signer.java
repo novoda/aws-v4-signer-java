@@ -13,6 +13,7 @@
 package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.CanonicalHeaders;
+import com.novoda.aws.v4.signer.CanonicalRequest;
 import com.novoda.aws.v4.signer.CredentialScope;
 import com.novoda.aws.v4.signer.Header;
 import com.novoda.aws.v4.signer.HttpRequest;
