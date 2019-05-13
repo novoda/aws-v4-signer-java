@@ -56,12 +56,10 @@ private fun normalizeQuery(rawQuery: String?): String {
     return rawQuery
             .extractQueryParameters()
             .sortedBy(Pair<String, String?>::first)
-            .fold(StringBuilder()) { builder, parameter ->
-                val name = parameter.first
-                val value = parameter.second ?: "" // if no value use an empty string as per the spec
+            .fold(StringBuilder()) { builder, (name, value) ->
                 builder.append(URLEncoding.encodeQueryComponent(name))
                         .append(QUERY_PARAMETER_VALUE_SEPARATOR)
-                        .append(URLEncoding.encodeQueryComponent(value))
+                        .append(URLEncoding.encodeQueryComponent(value ?: ""))
                         .append(QUERY_PARAMETER_SEPARATOR)
             }
             .removeSuffix(QUERY_PARAMETER_SEPARATOR.toString())
