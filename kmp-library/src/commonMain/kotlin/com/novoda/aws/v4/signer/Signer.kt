@@ -95,18 +95,18 @@ class Signer private constructor(private val request: CanonicalRequest, private 
 
         companion object {
 
-            private val DEFAULT_REGION = "us-east-1"
-            private val S3 = "s3"
-            private val GLACIER = "glacier"
+            private const val DEFAULT_REGION = "us-east-1"
+            private const val S3 = "s3"
+            private const val GLACIER = "glacier"
         }
 
     }
 
     companion object {
 
-        private val AUTH_TAG = "AWS4"
-        private val ALGORITHM = "$AUTH_TAG-HMAC-SHA256"
-        private val X_AMZ_DATE = "X-Amz-Date"
+        private const val AUTH_TAG = "AWS4"
+        private const val ALGORITHM = "$AUTH_TAG-HMAC-SHA256"
+        private const val X_AMZ_DATE = "X-Amz-Date"
 
         @JvmStatic
         fun builder(): Builder {
