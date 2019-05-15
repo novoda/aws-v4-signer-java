@@ -8,7 +8,11 @@ import com.novoda.aws.v4.signer.hash.toHexString
 import com.novoda.aws.v4.signer.hash.toUtf8ByteArray
 import kotlin.jvm.JvmStatic
 
-class Signer private constructor(private val request: CanonicalRequest, private val awsCredentials: AwsCredentials, private val date: String, private val scope: CredentialScope) {
+class Signer private constructor(
+        private val request: CanonicalRequest,
+        private val awsCredentials: AwsCredentials,
+        private val date: String,
+        private val scope: CredentialScope) {
 
     val canonicalRequest: String
         get() = request.get()
@@ -19,6 +23,7 @@ class Signer private constructor(private val request: CanonicalRequest, private 
             return buildStringToSign(date, scope.get(), hashedCanonicalRequest)
         }
 
+    @ExperimentalUnsignedTypes
     val signature: String
         get() {
             val signature = buildSignature(awsCredentials.secretKey, scope, stringToSign)
@@ -89,7 +94,7 @@ class Signer private constructor(private val request: CanonicalRequest, private 
 
         private fun getAwsCredentials(): AwsCredentials {
             val localAwsCredential = awsCredentials
-            checkNotNull(localAwsCredential, { "Missing required aws credentials"} )
+            checkNotNull(localAwsCredential, { "Missing required aws credentials" })
             return localAwsCredential
         }
 
@@ -129,6 +134,7 @@ class Signer private constructor(private val request: CanonicalRequest, private 
             return Hmac256Encoder.encode(key, value)
         }
 
+        @ExperimentalUnsignedTypes
         private fun buildSignature(secretKey: String, scope: CredentialScope, stringToSign: String): String {
             val kSecret = (AUTH_TAG + secretKey).toUtf8ByteArray()
             val kDate = hmacSha256(kSecret, scope.dateWithoutTimestamp)
