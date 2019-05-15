@@ -14,6 +14,8 @@ package uk.co.lucasweb.aws.v4.signer;
 
 import com.novoda.aws.v4.signer.Header;
 import com.novoda.aws.v4.signer.HttpRequest;
+import com.novoda.aws.v4.signer.Signer;
+import com.novoda.aws.v4.signer.credentials.AwsCredentials;
 import com.novoda.aws.v4.signer.hash.Sha256Encoder;
 
 import java.io.IOException;
@@ -35,8 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import com.novoda.aws.v4.signer.credentials.AwsCredentials;
 
 /**
  * @author Yoann Rodiere
@@ -72,7 +72,7 @@ public class AWSTestSuite {
 
         TestAWSRequestToSign request = testData.request;
 
-        Signer.Builder builder = Signer.builder().awsCredentials(new AwsCredentials(ACCESS_KEY, SECRET_KEY))
+        Signer.Builder builder = Signer.Companion.builder().awsCredentials(new AwsCredentials(ACCESS_KEY, SECRET_KEY))
                 .region(REGION);
         for (Header header : testData.request.headers) {
             builder.header(header);
