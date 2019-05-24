@@ -28,7 +28,7 @@ class SignerTest {
         val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         val request = HttpRequest.create("PUT", "/-/vaults/examplevault")
 
-        val signature = Signer.builder()
+        val signature = Signer.Builder()
                 .awsCredentials(AwsCredentials(ACCESS_KEY, SECRET_KEY))
                 .header("Host", "glacier.us-east-1.amazonaws.com")
                 .header("x-amz-date", "20120525T002453Z")
@@ -46,7 +46,7 @@ class SignerTest {
         val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         val request = HttpRequest.create("GET", "?max-keys=2&prefix=J")
 
-        val signature = Signer.builder()
+        val signature = Signer.Builder()
                 .awsCredentials(AwsCredentials(ACCESS_KEY, SECRET_KEY))
                 .header("Host", "examplebucket.s3.amazonaws.com")
                 .header("x-amz-date", "20130524T000000Z")
@@ -66,7 +66,7 @@ class SignerTest {
         val treeHash = "05c734c3f16b23358bb49c959d1420edac9f28ee844bf9b0580754c0f540acd8"
         val request = HttpRequest.create("PUT", "/-/vaults/dev2/multipart-uploads/j3eqysOZoNF3UiEoN3k_b6bdRGGdzgEfsLoUyZhMIwKRMuDLEYRw2nlCh8QXQ_dzqQMxrgFtmZjatxbFIZ9HpnIUi93B")
 
-        val signature = Signer.builder()
+        val signature = Signer.Builder()
                 .awsCredentials(AwsCredentials(ACCESS_KEY, SECRET_KEY))
                 .header("Accept", "application/json")
                 .header("Content-Length", "1049350")
