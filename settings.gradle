@@ -8,8 +8,8 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'aws-v4-signer-java'
+rootProject.name = 'aws-v4-signer'
 
-include ':kmp-library'
+include ':library'
 
 enableFeaturePreview('GRADLE_METADATA')
