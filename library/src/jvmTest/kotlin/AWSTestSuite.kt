@@ -29,7 +29,7 @@ class AWSTestSuite(private val testData: TestData) {
 
         val request = testData.request
 
-        val builder = Signer.builder().awsCredentials(AwsCredentials(ACCESS_KEY, SECRET_KEY))
+        val builder = Signer.Builder().awsCredentials(AwsCredentials(ACCESS_KEY, SECRET_KEY))
                 .region(REGION)
         for (header in testData.request.headers) {
             builder.header(header)
