@@ -52,7 +52,6 @@
 		AE47DF992265C0F600933D3E /* sampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE47DF9D2265C0F600933D3E /* sampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleTests.swift; sourceTree = "<group>"; };
 		AE47DF9F2265C0F600933D3E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AE47DFB02265C26200933D3E /* main.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = main.framework; path = "../../kmp-library/build/xcode-frameworks/main.framework"; sourceTree = "<group>"; };
 		AEC100132298195B003D1264 /* main.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = main.framework; path = "../../library/build/xcode-frameworks/main.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,7 +77,6 @@
 		AE47DF7C2265C0F500933D3E = {
 			isa = PBXGroup;
 			children = (
-				AE47DFB02265C26200933D3E /* main.framework */,
 				AEC100132298195B003D1264 /* main.framework */,
 				AE47DF872265C0F500933D3E /* sample */,
 				AE47DF9C2265C0F600933D3E /* sampleTests */,
