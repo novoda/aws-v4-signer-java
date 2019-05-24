@@ -10,7 +10,6 @@ pluginManagement {
 
 rootProject.name = 'aws-v4-signer-java'
 
-include ':java-library'
 include ':kmp-library'
 
 enableFeaturePreview('GRADLE_METADATA')
