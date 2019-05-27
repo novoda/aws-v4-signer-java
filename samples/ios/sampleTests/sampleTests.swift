@@ -43,4 +43,20 @@ class sampleTests: XCTestCase {
         assert(signature == "fe52b221b5173b501c9863cec59554224072ca34c1c827ec5fb8a257f97637b1")
     }
     
+    func  testSignRequest() {
+        let hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        let request = HttpRequest.Companion().create(method: "PUT", pathAndQuery: "/-/vaults/examplevault")
+        let signature = Signer.Builder()
+        .awsCredentials(awsCredentials: AwsCredentials(accessKey: "AKIAIOSFODNN7EXAMPLE", secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"))
+        .header(header: Header(name: "Host", value: "glacier.us-east-1.amazonaws.com"))
+        .header(header: Header(name: "x-amz-date", value: "20120525T002453Z"))
+        .header(header: Header(name: "x-amz-glacier-version", value: "2012-06-01"))
+        .buildGlacier(request: request, contentSha256: hash)
+        .signature
+        
+        let expectedSignature = "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20120525/us-east-1/glacier/aws4_request, " + "SignedHeaders=host;x-amz-date;x-amz-glacier-version, Signature=3ce5b2f2fffac9262b4da9256f8d086b4aaf42eba5f111c21681a65a127b7c2a"
+        
+        assert(signature == expectedSignature)
+    }
+    
 }
