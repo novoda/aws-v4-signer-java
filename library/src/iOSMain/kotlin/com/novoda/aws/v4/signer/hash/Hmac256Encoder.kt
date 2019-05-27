@@ -7,7 +7,7 @@ import platform.CoreCrypto.CCHmac
 import platform.CoreCrypto.CC_SHA256_DIGEST_LENGTH
 import platform.CoreCrypto.kCCHmacAlgSHA256
 
-actual object Hmac256Encoder {
+internal actual object Hmac256Encoder {
     @ExperimentalUnsignedTypes
     actual fun encode(key: ByteArray, value: String): ByteArray {
         val input = value.toUtf8()

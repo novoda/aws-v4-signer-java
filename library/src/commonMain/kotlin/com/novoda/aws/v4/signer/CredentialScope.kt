@@ -1,6 +1,6 @@
 package com.novoda.aws.v4.signer
 
-data class CredentialScope(val dateWithoutTimestamp: String, val service: String, val region: String) {
+internal data class CredentialScope(val dateWithoutTimestamp: String, val service: String, val region: String) {
 
     fun get(): String {
         return "$dateWithoutTimestamp/$region/$service/$TERMINATION_STRING"

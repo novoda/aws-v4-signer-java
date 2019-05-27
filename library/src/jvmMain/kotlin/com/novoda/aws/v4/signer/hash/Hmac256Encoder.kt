@@ -5,7 +5,7 @@ import javax.crypto.spec.SecretKeySpec
 
 private const val HMAC_SHA256 = "HmacSHA256"
 
-actual object Hmac256Encoder {
+internal actual object Hmac256Encoder {
 
     actual fun encode(key: ByteArray, value: String): ByteArray {
         val algorithm = HMAC_SHA256

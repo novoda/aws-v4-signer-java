@@ -1,6 +1,6 @@
 package com.novoda.aws.v4.signer
 
-data class CanonicalHeaders constructor(
+internal data class CanonicalHeaders constructor(
     val names: String,
     val canonicalizedHeaders: String,
     private val internalMap: Map<String, List<String>>

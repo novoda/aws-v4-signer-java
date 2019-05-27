@@ -6,7 +6,7 @@ private const val S3_SERVICE = "s3"
 private const val QUERY_PARAMETER_SEPARATOR = '&'
 private const val QUERY_PARAMETER_VALUE_SEPARATOR = '='
 
-class CanonicalRequest(
+internal class CanonicalRequest(
         private val service: String,
         private val httpRequest: HttpRequest,
         val headers: CanonicalHeaders,
