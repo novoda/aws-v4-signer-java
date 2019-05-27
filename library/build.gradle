@@ -1,5 +1,5 @@
 apply plugin: 'kotlin-multiplatform'
-group 'com.example'
+group 'com.novoda.aws.v4.signer'
 version '0.0.1'
 
 apply plugin: 'maven-publish'
