@@ -1,5 +1,5 @@
 apply plugin: 'kotlin-multiplatform'
-group 'com.novoda.aws.v4.signer'
+group 'com.novoda'
 version '0.0.1'
 
 apply plugin: 'maven-publish'
@@ -69,8 +69,6 @@ kotlin {
     }
     tasks.build.dependsOn packForXCode
 }
-
-
 
 configurations {
     compileClasspath
