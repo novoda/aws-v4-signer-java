@@ -1,6 +1,6 @@
 # aws-v4-signer
 
-aws-v4-signer is a lightweight Kotlin-Multiplatform implementation of the AWS V4 signing algorithm required by many of the AWS services. 
+aws-v4-signer is a lightweight Kotlin-Multiplatform implementation of the [AWS V4 signing algorithm](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) required by many of the AWS services. 
 
 Compatible with Java 7+, Kotlin & Swift.
 
