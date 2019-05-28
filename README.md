@@ -8,7 +8,7 @@ Compatible with Java 7+, Kotlin & Swift.
 
 [![CI status](https://ci.novoda.com/buildStatus/icon?job=aws-v4-signer-java)](https://ci.novoda.com/job/aws-v4-signer-java/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/snapshots/aws-v4-signer-java/images/download.svg)](https://bintray.com/novoda/snapshots/aws-v4-signer-java/_latestVersion)
 
-Add the latest aws-v4-signer-java Gradle dependency to your project
+Add the latest aws-v4-signer Gradle dependency to your project
 
 ```gradle
 repository {
@@ -18,7 +18,7 @@ repository {
 } 
 
 dependencies {
-    implementation 'com.novoda:aws-v4-signer-java:1.3-java7'
+    implementation 'com.novoda:aws-v4-signer:0.0.1'
 }
 ```
 

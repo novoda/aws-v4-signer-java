@@ -1,0 +1,10 @@
+rootProject.name = 'aws-v4-signer-android-sample'
+include ':app'
+
+includeBuild('../../') {
+    dependencySubstitution {
+        substitute module('com.novoda:aws-v4-signer') with project(':aws-v4-signer')
+    }
+}
+
+enableFeaturePreview('GRADLE_METADATA')
