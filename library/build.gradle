@@ -1,44 +1,8 @@
 apply plugin: 'kotlin-multiplatform'
-apply plugin: 'com.novoda.bintray-release'
-apply plugin: 'com.novoda.build-properties'
-
-
-buildProperties {
-    cli {
-        using(project)
-    }
-
-    bintray {
-        def bintrayCredentials = {
-            return isDryRun() ?
-                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
-                    new File("${System.getenv('BINTRAY_PROPERTIES')}")
-        }
-        using(bintrayCredentials()).or(cli)
-        description = '''This should contain the following properties:
-                        - bintrayOrg: name of the Bintray organisation to deploy the artifacts to
-                        - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
-                        - bintrayUser: name of the account used to deploy the artifacts
-                        - bintrayKey: API key of the account used to deploy the artifacts'''
-                .stripIndent()
-    }
-}
+apply from: rootProject.file('gradle/publish.gradle')
 
 group 'com.novoda'
 version = '0.0.1'
-
-publish {
-    groupId = group
-    artifactId = 'aws-v4-signer'
-    publishVersion = project.version
-    website = 'https://github.com/novoda/aws-v4-signer-java'
-    desc = 'Kotlin Multiplatform AWS V4 Signer'
-
-    userOrg = project.buildProperties.bintray['bintrayOrg'].string
-    repoName = project.buildProperties.bintray['bintrayRepo'].string
-    bintrayUser = project.buildProperties.bintray['bintrayUser'].string
-    bintrayKey = project.buildProperties.bintray['bintrayKey'].string
-}
 
 kotlin {
     targets {
@@ -108,8 +72,4 @@ kotlin {
 
 configurations {
     compileClasspath
-}
-
-boolean isDryRun() {
-    buildProperties.cli['dryRun'].or(true).boolean
 }
