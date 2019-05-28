@@ -11,27 +11,30 @@ buildProperties {
     bintray {
         def bintrayCredentials = {
             return isDryRun() ?
-                    ['bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
+                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
-                         - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
-                         - bintrayUser: name of the account used to deploy the artifacts
-                         - bintrayKey: API key of the account used to deploy the artifacts'''.stripIndent()
+                        - bintrayOrg: name of the Bintray organisation to deploy the artifacts to
+                        - bintrayRepo: name of the repo of the organisation to deploy the artifacts to
+                        - bintrayUser: name of the account used to deploy the artifacts
+                        - bintrayKey: API key of the account used to deploy the artifacts'''
+                .stripIndent()
     }
 }
 
+group 'com.novoda'
 version = '0.0.1'
 
 publish {
-    userOrg = 'novoda'
-    groupId = 'com.novoda'
+    groupId = group
     artifactId = 'aws-v4-signer'
     publishVersion = project.version
     website = 'https://github.com/novoda/aws-v4-signer-java'
     desc = 'Kotlin Multiplatform AWS V4 Signer'
 
+    userOrg = project.buildProperties.bintray['bintrayOrg'].string
     repoName = project.buildProperties.bintray['bintrayRepo'].string
     bintrayUser = project.buildProperties.bintray['bintrayUser'].string
     bintrayKey = project.buildProperties.bintray['bintrayKey'].string
