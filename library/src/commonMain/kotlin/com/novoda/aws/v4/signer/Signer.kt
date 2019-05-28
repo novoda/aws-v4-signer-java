@@ -50,6 +50,8 @@ class Signer private constructor(
             private var region: String = DEFAULT_REGION,
             private val headersList: ArrayList<Header> = arrayListOf()) {
 
+        constructor() : this(null, DEFAULT_REGION, arrayListOf())
+
         companion object {
             private const val DEFAULT_REGION = "us-east-1"
             private const val S3 = "s3"
