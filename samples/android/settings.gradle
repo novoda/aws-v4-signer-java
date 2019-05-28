@@ -3,6 +3,8 @@ include ':app'
 
 includeBuild('../../') {
     dependencySubstitution {
-        substitute module('com.novoda:aws-v4-signer-jvm') with project(':aws-v4-signer')
+        substitute module('com.novoda:aws-v4-signer') with project(':aws-v4-signer')
     }
 }
+
+enableFeaturePreview('GRADLE_METADATA')
