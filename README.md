@@ -37,7 +37,7 @@ An example can be found under `/samples/ios`.
 
 Swift:
 ```swift
- let hash = Sha256Encoder().encode(value: "content as string")
+        let hash = Sha256Encoder().encode(value: "content as string")
         let request = HttpRequest.Companion().create(method: "PUT", pathAndQuery: "?max-keys=2&prefix=J")
         let signature = Signer.Builder()
             .awsCredentials(awsCredentials: AwsCredentials(accessKey: "AKIAIOSFODNN7EXAMPLE", secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"))
@@ -50,7 +50,7 @@ Swift:
 
 Kotlin:
 ```kotlin
-val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         val request = HttpRequest.create("GET", "?max-keys=2&prefix=J")
 
         val signature = Signer.Builder()
@@ -66,7 +66,7 @@ val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 Swift:
 ```swift
-let hash = Sha256Encoder().encode(value: "content as string")
+        let hash = Sha256Encoder().encode(value: "content as string")
         let request = HttpRequest.Companion().create(method: "PUT", pathAndQuery: "/-/vaults/examplevault")
         let signature = Signer.Builder()
             .awsCredentials(awsCredentials: AwsCredentials(accessKey: "AKIAIOSFODNN7EXAMPLE", secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"))
@@ -79,7 +79,7 @@ let hash = Sha256Encoder().encode(value: "content as string")
 
 Kotlin:
 ```kotlin
-val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        val hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         val request = HttpRequest.create("PUT", "/-/vaults/examplevault")
 
         val signature = Signer.Builder()
