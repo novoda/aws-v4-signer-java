@@ -52,15 +52,13 @@ bintray {
     }
 }
 
-afterEvaluate {
-    project.publishing.publications.forEach { publication ->
-        publication.pom.withXml {
-            def root = asNode()
-            root.appendNode('name', project.name)
-            root.appendNode('description', 'A Kotlin-Multiplatform implementation of the AWS V4 signing algorithm for Android and iOS')
-            root.appendNode('url', 'https://github.com/novoda/aws-v4-signer-java')
-            root.children().last() + pomConfig
-        }
+project.publishing.publications.all { publication ->
+    publication.pom.withXml {
+        def root = asNode()
+        root.appendNode('name', project.name)
+        root.appendNode('description', 'A Kotlin-Multiplatform implementation of the AWS V4 signing algorithm for Android and iOS')
+        root.appendNode('url', 'https://github.com/novoda/aws-v4-signer-java')
+        root.children().last() + pomConfig
     }
 }
 
