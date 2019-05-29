@@ -14,9 +14,7 @@ Add the latest aws-v4-signer Gradle dependency to your project
 
 ```gradle
 repository {
-    maven {
-        url 'https://novoda.bintray.com/snapshots'
-    }
+   jcenter()
 } 
 
 dependencies {
