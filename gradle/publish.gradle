@@ -32,15 +32,6 @@ def pomConfig = {
             distribution "repo"
         }
     }
-    developers {
-        developer {
-            id "novoda"
-            name "Novoda GmbH"
-        }
-    }
-    scm {
-        url "https://github.com/novoda/aws-v4-signer-java"
-    }
 }
 
 bintray {
