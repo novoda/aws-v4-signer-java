@@ -1,12 +1,14 @@
 # aws-v4-signer
 
-aws-v4-signer is a lightweight Kotlin-Multiplatform implementation of the AWS V4 signing algorithm required by many of the AWS services. 
+aws-v4-signer is a lightweight Kotlin-Multiplatform implementation of the [AWS V4 signing algorithm](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html) required by many of the AWS services. 
 
 Compatible with Java 7+, Kotlin & Swift.
 
 ## Setup
 
-[![CI status](https://ci.novoda.com/buildStatus/icon?job=aws-v4-signer-java)](https://ci.novoda.com/job/aws-v4-signer-java/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda/snapshots/aws-v4-signer-java/images/download.svg)](https://bintray.com/novoda/snapshots/aws-v4-signer-java/_latestVersion)
+[![CI status](https://ci.novoda.com/buildStatus/icon?job=aws-v4-signer)](https://ci.novoda.com/job/aws-v4-signer/lastBuild/console) [![Download from Bintray](https://api.bintray.com/packages/novoda-oss/maven/aws-v4-signer/images/download.svg)](https://bintray.com/novoda-oss/maven/aws-v4-signer/_latestVersion)
+
+### Gradle
 
 Add the latest aws-v4-signer Gradle dependency to your project
 
@@ -20,6 +22,15 @@ repository {
 dependencies {
     implementation 'com.novoda:aws-v4-signer:0.0.1'
 }
+```
+
+### Xcode
+
+Generate an Xcode framework and link it to your project following the [official documentation](https://kotlinlang.org/docs/tutorials/native/mpp-ios-android.html).
+An example can be found under `/samples/ios`. 
+
+```gradle
+./gradlew :aws-v4-signer:packForXCode
 ```
 
 ## Usage

@@ -1,8 +1,8 @@
 apply plugin: 'kotlin-multiplatform'
-group 'com.novoda'
-version '0.0.1'
+apply from: rootProject.file('gradle/publish.gradle')
 
-apply plugin: 'maven-publish'
+group 'com.novoda'
+version = '0.0.1'
 
 kotlin {
     targets {
