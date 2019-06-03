@@ -13,8 +13,10 @@ Compatible with Java 7+, Kotlin & Swift.
 Add the latest aws-v4-signer Gradle dependency to your project
 
 ```gradle
-repository {
-   jcenter()
+repository {  
+    maven {
+      url 'https://dl.bintray.com/novoda-oss/maven'
+    }
 } 
 
 dependencies {
