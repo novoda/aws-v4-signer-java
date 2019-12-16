@@ -10,5 +10,3 @@ pluginManagement {
 
 include ':aws-v4-signer'
 project(':aws-v4-signer').projectDir = file('library')
-
-enableFeaturePreview('GRADLE_METADATA')

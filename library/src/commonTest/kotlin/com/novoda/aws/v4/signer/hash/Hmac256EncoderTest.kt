@@ -6,6 +6,7 @@ import kotlin.test.assertEquals
 
 class Hmac256EncoderTest {
 
+    @ExperimentalUnsignedTypes
     @Test
     fun `create signature from string to sign`() {
         val stringToSign = "AWS4-HMAC-SHA256\n" +
@@ -19,5 +20,6 @@ class Hmac256EncoderTest {
     }
 
 }
+
 @ExperimentalUnsignedTypes
 private fun ByteArray.toHexString() = asUByteArray().joinToString("") { it.toString(16).padStart(2, '0') }

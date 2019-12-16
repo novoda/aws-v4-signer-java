@@ -6,5 +6,3 @@ includeBuild('../../') {
         substitute module('com.novoda:aws-v4-signer') with project(':aws-v4-signer')
     }
 }
-
-enableFeaturePreview('GRADLE_METADATA')
