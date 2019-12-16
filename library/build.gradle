@@ -3,7 +3,7 @@ apply plugin: 'kotlinx-serialization'
 apply from: rootProject.file('gradle/publish.gradle')
 
 group 'com.novoda'
-version = '0.0.1'
+version = '0.0.2'
 
 kotlin {
     targets {
