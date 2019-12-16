@@ -57,7 +57,6 @@ kotlin {
         final String mode = project.findProperty("XCODE_CONFIGURATION")?.toUpperCase() ?: 'DEBUG'
 
         inputs.property "mode", mode
-//        dependsOn kotlin.targets.iOS.compilations.main.linkTaskName("FRAMEWORK", mode)
 
         from { kotlin.targets.iOS.compilations.main.getBinary("FRAMEWORK", mode).parentFile }
         into frameworkDir
