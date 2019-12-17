@@ -49,6 +49,7 @@ class AWSTestSuite(private val testData: TestData) {
         Assert.assertEquals("Invalid string to sign", testData.expectedStringToSign, signer.stringToSign)
     }
 
+    @ExperimentalUnsignedTypes
     @Test
     fun signature() {
         Assert.assertEquals("Invalid signature", testData.expectedSignature, signer.signature)

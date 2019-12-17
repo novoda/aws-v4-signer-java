@@ -20,6 +20,7 @@ import kotlin.test.assertEquals
 /**
  * @author Richard Lucas
  */
+@ExperimentalUnsignedTypes
 class SignerTest {
 
     @Test

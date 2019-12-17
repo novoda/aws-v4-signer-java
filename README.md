@@ -20,7 +20,7 @@ repository {
 } 
 
 dependencies {
-    implementation 'com.novoda:aws-v4-signer:0.0.1'
+    implementation 'com.novoda:aws-v4-signer:0.0.2'
 }
 ```
 
