@@ -10,7 +10,11 @@ kotlin {
         fromPreset(presets.jvm, 'jvm')
         // This preset is for iPhone emulator
         // Switch here to presets.iosArm64 to build library for iPhone device
-        fromPreset(presets.iosX64, 'iOS')
+        fromPreset(presets.iosX64, 'iOS') {
+            binaries.framework {
+                baseName = "SharedCode"
+            }
+        }
     }
     sourceSets {
         commonMain {
@@ -55,10 +59,12 @@ kotlin {
     task packForXCode(type: Sync) {
         final File frameworkDir = new File(buildDir, "xcode-frameworks")
         final String mode = project.findProperty("XCODE_CONFIGURATION")?.toUpperCase() ?: 'DEBUG'
+        def framework = kotlin.targets.getByName("iOS").binaries.getFramework(mode)
+        dependsOn(framework.linkTask)
 
         inputs.property "mode", mode
 
-        from { kotlin.targets.iOS.compilations.main.getBinary("FRAMEWORK", mode).parentFile }
+        from { framework.outputDirectory }
         into frameworkDir
 
         doLast {
