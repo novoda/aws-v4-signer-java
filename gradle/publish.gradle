@@ -8,9 +8,16 @@ buildProperties {
     }
 
     bintray {
+//        def bintrayCredentials = {
+//            return isDryRun() ?
+//                    ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
+//                    new File("${System.getenv('BINTRAY_PROPERTIES')}")
+//        }
+
         def bintrayCredentials = {
             return new File("${System.getenv('BINTRAY_PROPERTIES')}")
         }
+
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
                         - bintrayOrg: name of the Bintray organisation to deploy the artifacts to
