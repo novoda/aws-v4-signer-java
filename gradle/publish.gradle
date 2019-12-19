@@ -1,6 +1,5 @@
 apply plugin: 'com.novoda.build-properties'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
 
 buildProperties {
     cli {
@@ -8,42 +7,22 @@ buildProperties {
     }
 }
 
-def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
+repositories {
+    jcenter()
+    mavenCentral()
 }
 
 bintray {
-
-    user = project.buildProperties.cli['bintrayUser'].string
-    key = project.buildProperties.cli['bintrayKey'].string
-    dryRun = project.buildProperties.cli['dryRun'].or(true).boolean
+    user = buildProperties.cli['bintrayUser']
+    key = buildProperties.cli['bintrayKey']
+    dryRun = true
+    publish = false
 
     pkg {
-        userOrg = project.buildProperties.cli['bintrayOrg'].string
-        repo = project.buildProperties.cli['bintrayRepo'].string
+        userOrg = buildProperties.cli['bintrayOrg']
+        repo = buildProperties.cli['maven']
         name = "aws-v4-signer"
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/novoda/aws-v4-signer-java'
     }
 }
-
-project.publishing.publications.all { publication ->
-    publication.pom.withXml {
-        def root = asNode()
-        root.appendNode('name', project.name)
-        root.appendNode('description', 'A Kotlin-Multiplatform implementation of the AWS V4 signing algorithm for Android and iOS')
-        root.appendNode('url', 'https://github.com/novoda/aws-v4-signer-java')
-        root.children().last() + pomConfig
-    }
-}
-
-bintrayUpload.doFirst {
-    publications = project.publishing.publications
-}
-
