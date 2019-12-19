@@ -7,20 +7,16 @@ buildProperties {
     }
 }
 
-repositories {
-    jcenter()
-    mavenCentral()
-}
-
 bintray {
-    user = buildProperties.cli['bintrayUser']
-    key = buildProperties.cli['bintrayKey']
-    dryRun = true
-    publish = false
+    user = project.getProperty('bintrayUser')
+    key = project.getProperty('bintrayKey')
+    dryRun = false
+    publish = true
+
 
     pkg {
-        userOrg = buildProperties.cli['bintrayOrg']
-        repo = buildProperties.cli['maven']
+        userOrg = project.getProperty('bintrayOrg')
+        repo = project.getProperty('bintrayRepo')
         name = "aws-v4-signer"
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/novoda/aws-v4-signer-java'
