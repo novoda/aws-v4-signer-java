@@ -12,7 +12,7 @@ buildProperties {
             def result = isDryRun() ?
                     ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
-            println result
+            println new File("${System.getenv('BINTRAY_PROPERTIES')}")
             return result
         }
         using(bintrayCredentials()).or(cli)
