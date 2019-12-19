@@ -9,9 +9,11 @@ buildProperties {
 
     bintray {
         def bintrayCredentials = {
-            return isDryRun() ?
+            def result = isDryRun() ?
                     ['bintrayOrg': 'n/a', 'bintrayRepo': 'n/a', 'bintrayUser': 'n/a', 'bintrayKey': 'n/a'] :
                     new File("${System.getenv('BINTRAY_PROPERTIES')}")
+            println result
+            return result
         }
         using(bintrayCredentials()).or(cli)
         description = '''This should contain the following properties:
@@ -42,7 +44,7 @@ bintray {
     user = project.buildProperties.bintray['bintrayUser'].string
     key = project.buildProperties.bintray['bintrayKey'].string
     dryRun = project.buildProperties.cli['dryRun'].or(true).boolean
-    
+
     pkg {
         userOrg = project.buildProperties.bintray['bintrayOrg'].string
         repo = project.buildProperties.bintray['bintrayRepo'].string
